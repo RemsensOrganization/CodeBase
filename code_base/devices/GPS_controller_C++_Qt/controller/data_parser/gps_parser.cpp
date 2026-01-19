@@ -1,14 +1,13 @@
-#include <QDebug>
-
 #include "controller/data_parser/gps_parser.h"
+
+#include <QDebug>
 
 GPSParser::GPSParser(QObject *parent) : QObject(parent) {}
 
 void GPSParser::parseLine(const QString &line) {
     if (line.startsWith("$GPGGA")) {
         parseGpgga(line);
-    }
-    else if (line.startsWith("$GPRMC")) {
+    } else if (line.startsWith("$GPRMC")) {
         parseGprmc(line);
     }
     if (gotGGA && gotRMC) {
@@ -19,22 +18,21 @@ void GPSParser::parseLine(const QString &line) {
 }
 
 double GPSParser::convertCoord(const QString &coord, const QString &dir) {
-    if (coord.isEmpty() || (dir != "N" && dir != "S" && dir != "E" && dir != "W"))
+    if (coord.isEmpty() ||
+        (dir != "N" && dir != "S" && dir != "E" && dir != "W"))
         return 0.0;
 
     int degLen = (dir == "N" || dir == "S") ? 2 : 3;
     int deg = coord.left(degLen).toInt();
     double min = coord.mid(degLen).toDouble();
     double decimal = deg + min / 60.0;
-    if (dir == "S" || dir == "W")
-        decimal *= -1;
+    if (dir == "S" || dir == "W") decimal *= -1;
     return decimal;
 }
 
 void GPSParser::parseGpgga(const QString &line) {
     QStringList parts = line.split(",");
-    if (parts.size() < 10)
-        return;
+    if (parts.size() < 10) return;
 
     latest.altitude = parts[9].toDouble();
     latest.timeUtc = parts[1];
@@ -45,8 +43,7 @@ void GPSParser::parseGpgga(const QString &line) {
 
 void GPSParser::parseGprmc(const QString &line) {
     QStringList parts = line.split(",");
-    if (parts.size() < 9)
-        return;
+    if (parts.size() < 9) return;
 
     if (parts[2] == "A") {
         latest.latitude = convertCoord(parts[3], parts[4]);
@@ -56,6 +53,4 @@ void GPSParser::parseGprmc(const QString &line) {
         latest.date = parts[9];
     }
     gotRMC = true;
-
 }
-

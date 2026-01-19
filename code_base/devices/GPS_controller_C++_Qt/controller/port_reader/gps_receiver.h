@@ -4,8 +4,7 @@
 #include <QObject>
 #include <QSerialPort>
 
-class GPSReceiver : public QObject
-{
+class GPSReceiver : public QObject {
     Q_OBJECT
 
 public:
@@ -21,11 +20,6 @@ private:
     void readLoop(const QString &portName, int baudRate);
 
     bool running = false;
-
 };
 
-
-#endif // CODE_BASE_DEVICES_GPS_CONTROLLER_PORT_READER_GPSRECEIVER_H
-
-
-
+#endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_PORT_READER_GPSRECEIVER_H

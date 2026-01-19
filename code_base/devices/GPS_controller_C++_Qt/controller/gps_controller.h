@@ -1,8 +1,8 @@
 #ifndef CODE_BASE_DEVICES_GPS_CONTROLLER_GPS_CONTROLLER_H
 #define CODE_BASE_DEVICES_GPS_CONTROLLER_GPS_CONTROLLER_H
 
-#include <QThread>
 #include <QObject>
+#include <QThread>
 
 #include "controller/data/gps_data.h"
 
@@ -26,11 +26,10 @@ private slots:
 
 private:
     class GPSReceiver *receiver;
-    class GPSParser   *parser;
+    class GPSParser *parser;
     class GpsPortAutoDetector *detector;
 
     QThread receiverThread;
 };
 
-
-#endif // CODE_BASE_DEVICES_GPS_CONTROLLER_GPS_CONTROLLER_H
+#endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_GPS_CONTROLLER_H

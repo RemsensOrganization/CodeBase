@@ -1,6 +1,6 @@
+#include <QDebug>
 #include <QFile>
 #include <QTextStream>
-#include <QDebug>
 
 #include "controller/data/gps_data.h"
 
@@ -11,8 +11,7 @@ void saveGpsDataToFile(const GpsData &data, const QString &filePath) {
         out << data.toString() << "\n";
         out.flush();
     } else {
-        qDebug() << "[FileWriter] Ошибка: не удалось открыть файл";
+        qDebug() << "[FileWriter] Ошибка: не удалось "
+                    "открыть файл";
     }
 }
-
-

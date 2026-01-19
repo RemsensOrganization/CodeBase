@@ -1,19 +1,18 @@
-#ifndef GPSPORTAUTODETECTOR_H
-#define GPSPORTAUTODETECTOR_H
+#ifndef GPS_PORT_AUTODETECTOR_H
+#define GPS_PORT_AUTODETECTOR_H
+
+#include <controller/json_file_creator/json_file_creator.h>
 
 #include <QObject>
 #include <QSerialPortInfo>
 
-#include <controller/json_file_creator/json_file_creator.h>
-
-class GpsPortAutoDetector : public QObject
-{
+class GpsPortAutoDetector : public QObject {
     Q_OBJECT
 public:
-    explicit GpsPortAutoDetector(QObject *parent = nullptr);
+    explicit GpsPortAutoDetector(QObject* parent = nullptr);
     void FindPorts();
     QList<QSerialPortInfo> getGpsPorts() const;
-    QString getGpsPortName() const {return gpsPortName;}
+    QString getGpsPortName() const { return gpsPortName; }
 
 private:
     bool isCOMPortGPS(const QSerialPortInfo& portInfo) const;
@@ -26,4 +25,4 @@ private:
     QList<QSerialPortInfo> gpsPorts;
 };
 
-#endif // GPSPORTAUTODETECTOR_H
+#endif  // GPS_PORT_AUTODETECTOR_H

@@ -17,14 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(controller/gps_controller.pri)
 
-
 SOURCES += \
     main.cpp \
-
-HEADERS += \
-
-FORMS += \
-
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,78 +1,97 @@
 #include "controller/json_file_creator/json_file_creator.h"
 
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
 #include <QDebug>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 JsonFileCreator::JsonFileCreator(const QString& filePath)
     : jsonFilePath(filePath) {}
 
-void JsonFileCreator::createDefaultDatabase() //fix: переименовать во что-то типа createDefaultDatabaseIfNotExist
-{                                             // или
-    if (QFile::exists(jsonFilePath))          // убрать отсюда эту проверку и переместить в место между
-                                              // JsonFileCreator db("gps_database.json"); db.createDefaultDatabase();
-        return;
+void JsonFileCreator::createDefaultDatabase() {
+    if (QFile::exists(jsonFilePath)) return;
 
     QJsonArray deviceArray;
 
-    auto addDevice = [&](const QString& vendor, const QString& vid, const QString& pid,
-                         const QStringList& keywords, const QString& comment) {
+    auto addDevice = [&](const QString& vendor, const QString& vid,
+                         const QString& pid, const QStringList& keywords,
+                         const QString& comment) {
         QJsonObject obj;
         obj["vendor"] = vendor;
         obj["device_id"] = QJsonObject{{"vid", vid}, {"pid", pid}};
         QJsonArray descArray;
-        for (const QString& word : keywords)
-            descArray.append(word.toLower());
+        for (const QString& word : keywords) descArray.append(word.toLower());
         obj["description"] = descArray;
         obj["comment"] = comment;
         deviceArray.append(obj);
     };
 
     // u-blox series
-    addDevice("u-blox", "1546", "01A4", {"gps", "gnss", "ublox", "antaris"}, "ANTARIS 4 GPS Receiver");
-    addDevice("u-blox", "1546", "01A5", {"gps", "gnss", "ublox", "galileo"}, "u-blox 5 GPS/GALILEO");
-    addDevice("u-blox", "1546", "01A6", {"gps", "gnss", "ublox"}, "u-blox 6 GPS");
-    addDevice("u-blox", "1546", "01A7", {"gps", "gnss", "ublox"}, "u-blox 7 GPS/GNSS");
-    addDevice("u-blox", "1546", "01A8", {"gps", "gnss", "ublox"}, "u-blox 8 GPS/GNSS");
-    addDevice("u-blox", "1546", "01A9", {"gps", "gnss", "ublox"}, "u-blox GNSS Receiver");
-    addDevice("u-blox", "1546", "03A7", {"gps", "gnss", "ublox"}, "u-blox 7 (alternative PID)");
-    addDevice("u-blox", "1546", "03A8", {"gps", "gnss", "ublox"}, "u-blox 8 (alternative PID)");
+    addDevice("u-blox", "1546", "01A4", {"gps", "gnss", "ublox", "antaris"},
+              "ANTARIS 4 GPS Receiver");
+    addDevice("u-blox", "1546", "01A5", {"gps", "gnss", "ublox", "galileo"},
+              "u-blox 5 GPS/GALILEO");
+    addDevice("u-blox", "1546", "01A6", {"gps", "gnss", "ublox"},
+              "u-blox 6 GPS");
+    addDevice("u-blox", "1546", "01A7", {"gps", "gnss", "ublox"},
+              "u-blox 7 GPS/GNSS");
+    addDevice("u-blox", "1546", "01A8", {"gps", "gnss", "ublox"},
+              "u-blox 8 GPS/GNSS");
+    addDevice("u-blox", "1546", "01A9", {"gps", "gnss", "ublox"},
+              "u-blox GNSS Receiver");
+    addDevice("u-blox", "1546", "03A7", {"gps", "gnss", "ublox"},
+              "u-blox 7 (alternative PID)");
+    addDevice("u-blox", "1546", "03A8", {"gps", "gnss", "ublox"},
+              "u-blox 8 (alternative PID)");
     for (int i = 0x0502; i <= 0x050D; ++i) {
-        addDevice("u-blox", "1546", QString::number(i, 16).toUpper().rightJustified(4, '0'),
-                  {"gps", "gnss", "ublox", "evk", "zed", "neo", "odin"}, "u-blox EVK board");
+        addDevice("u-blox", "1546",
+                  QString::number(i, 16).toUpper().rightJustified(4, '0'),
+                  {"gps", "gnss", "ublox", "evk", "zed", "neo", "odin"},
+                  "u-blox EVK board");
     }
 
     // Garmin
-    addDevice("Garmin", "091E", "0003", {"gps", "garmin", "receiver"}, "Garmin GPS (Generic)");
-    addDevice("Garmin", "091E", "0004", {"gps", "garmin", "gpsmap"}, "Garmin GPSmap series");
-    addDevice("Garmin", "091E", "0005", {"gps", "garmin", "etrex"}, "Garmin eTrex series");
+    addDevice("Garmin", "091E", "0003", {"gps", "garmin", "receiver"},
+              "Garmin GPS (Generic)");
+    addDevice("Garmin", "091E", "0004", {"gps", "garmin", "gpsmap"},
+              "Garmin GPSmap series");
+    addDevice("Garmin", "091E", "0005", {"gps", "garmin", "etrex"},
+              "Garmin eTrex series");
 
     // GlobalSat
-    addDevice("GlobalSat", "067B", "2303", {"gps", "globalsat", "pl2303"}, "GlobalSat via PL2303");
-    addDevice("GlobalSat", "10C4", "EA60", {"gps", "globalsat", "cp210x"}, "GlobalSat via CP210x");
+    addDevice("GlobalSat", "067B", "2303", {"gps", "globalsat", "pl2303"},
+              "GlobalSat via PL2303");
+    addDevice("GlobalSat", "10C4", "EA60", {"gps", "globalsat", "cp210x"},
+              "GlobalSat via CP210x");
 
     // SiRF
-    addDevice("SiRF", "10C4", "EA60", {"gps", "sirf", "cp210x"}, "SiRF Star III via CP210x");
+    addDevice("SiRF", "10C4", "EA60", {"gps", "sirf", "cp210x"},
+              "SiRF Star III via CP210x");
 
     // Quectel
-    addDevice("Quectel", "2C7C", "0001", {"gps", "gnss", "quectel"}, "Quectel GNSS module");
+    addDevice("Quectel", "2C7C", "0001", {"gps", "gnss", "quectel"},
+              "Quectel GNSS module");
 
     // SkyTraq
-    addDevice("SkyTraq", "1A86", "7523", {"gps", "gnss", "skytraq", "ch340"}, "SkyTraq GNSS via CH340");
+    addDevice("SkyTraq", "1A86", "7523", {"gps", "gnss", "skytraq", "ch340"},
+              "SkyTraq GNSS via CH340");
 
     // Trimble
-    addDevice("Trimble", "0B3E", "0001", {"gps", "trimble"}, "Trimble GPS Receiver");
+    addDevice("Trimble", "0B3E", "0001", {"gps", "trimble"},
+              "Trimble GPS Receiver");
 
     // Holux
-    addDevice("Holux", "0E8D", "0003", {"gps", "holux", "gpslim"}, "Holux GPSlim series");
+    addDevice("Holux", "0E8D", "0003", {"gps", "holux", "gpslim"},
+              "Holux GPSlim series");
 
     // Navilock
-    addDevice("Navilock", "0403", "6001", {"gps", "navilock", "ftdi"}, "Navilock GPS via FTDI");
+    addDevice("Navilock", "0403", "6001", {"gps", "navilock", "ftdi"},
+              "Navilock GPS via FTDI");
 
     // Delorme
-    addDevice("Delorme", "067B", "2303", {"gps", "delorme", "earthmate"}, "Delorme Earthmate GPS LT-20");
+    addDevice("Delorme", "067B", "2303", {"gps", "delorme", "earthmate"},
+              "Delorme Earthmate GPS LT-20");
 
     QJsonDocument doc(deviceArray);
     QFile file(jsonFilePath);
@@ -86,8 +105,7 @@ void JsonFileCreator::createDefaultDatabase() //fix: переименовать 
     qDebug() << "JSON-файл создан:" << jsonFilePath;
 }
 
-QList<GpsDeviceEntry> JsonFileCreator::loadDatabase()
-{
+QList<GpsDeviceEntry> JsonFileCreator::loadDatabase() {
     QList<GpsDeviceEntry> gpsDatabase;
 
     QFile file(jsonFilePath);

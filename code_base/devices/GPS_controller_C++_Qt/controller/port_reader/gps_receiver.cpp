@@ -1,14 +1,12 @@
-#include <QDebug>
-#include <Windows.h>
-#include <QThread>
-
-#include <controller/devices_ports_explorer/gps_port_autodetector.h>
 #include "controller/port_reader/gps_receiver.h"
 
-GPSReceiver::GPSReceiver(QObject *parent) : QObject(parent)
-{
+#include <Windows.h>
+#include <controller/devices_ports_explorer/gps_port_autodetector.h>
 
-}
+#include <QDebug>
+#include <QThread>
+
+GPSReceiver::GPSReceiver(QObject *parent) : QObject(parent) {}
 
 void GPSReceiver::startInThread(const QString &portName, int baudRate) {
     // Убедиться, что нас вызвали не из GUI потока
@@ -16,17 +14,12 @@ void GPSReceiver::startInThread(const QString &portName, int baudRate) {
     // при необходимости:
     // Q_ASSERT(QThread::currentThread() != qApp->thread());
 
-    if (running)
-        return;
+    if (running) return;
     running = true;
     readLoop(portName, baudRate);
 }
 
-
-void GPSReceiver::stopInThread() {
-    running = false;
-}
-
+void GPSReceiver::stopInThread() { running = false; }
 
 void GPSReceiver::readLoop(const QString &portName, int baudRate) {
     running = true;

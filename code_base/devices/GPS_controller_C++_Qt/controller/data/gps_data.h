@@ -1,9 +1,9 @@
 #ifndef CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_GPS_DATA_H
 #define CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_GPS_DATA_H
 
+#include <QMetaType>
 #include <QString>
 #include <QStringList>
-#include <QMetaType>
 
 struct GpsData {
     double latitude = 0.0;
@@ -21,20 +21,20 @@ struct GpsData {
 
         if (valid) {
             parts << QString("Координаты: %1, %2")
-                      .arg(latitude, 0, 'f', 6)
-                      .arg(longitude, 0, 'f', 6);
+                         .arg(latitude, 0, 'f', 6)
+                         .arg(longitude, 0, 'f', 6);
 
             if (timeUtc.length() >= 6) {
-                QString hh = timeUtc.mid(0,2);
-                QString mm = timeUtc.mid(2,2);
-                QString ss = timeUtc.mid(4,2);
+                QString hh = timeUtc.mid(0, 2);
+                QString mm = timeUtc.mid(2, 2);
+                QString ss = timeUtc.mid(4, 2);
                 parts << "Время (UTC): " + hh + ":" + mm + ":" + ss;
             }
 
             if (date.length() == 6) {
-                QString dd = date.mid(0,2);
-                QString mm = date.mid(2,2);
-                QString yy = date.mid(4,2);
+                QString dd = date.mid(0, 2);
+                QString mm = date.mid(2, 2);
+                QString yy = date.mid(4, 2);
                 parts << "Дата: " + dd + "." + mm + ".20" + yy;
             }
 
@@ -48,10 +48,7 @@ struct GpsData {
 
         return parts.join(" | ");
     }
-
 };
 Q_DECLARE_METATYPE(GpsData)
 
-
-
-#endif // CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_GPS_DATA_H
+#endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_GPS_DATA_H

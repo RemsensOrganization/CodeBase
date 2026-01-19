@@ -1,9 +1,9 @@
 #ifndef CODE_BASE_DEVICES_GPS_CONTROLLER_JSON_FILE_CREATOR_JSONFILECREATOR_H
 #define CODE_BASE_DEVICES_GPS_CONTROLLER_JSON_FILE_CREATOR_JSONFILECREATOR_H
 
+#include <QList>
 #include <QString>
 #include <QStringList>
-#include <QList>
 
 struct GpsDeviceEntry {
     QString vendor;
@@ -13,17 +13,15 @@ struct GpsDeviceEntry {
     QStringList keywords;
 };
 
-class JsonFileCreator
-{
-public:
+class JsonFileCreator {
+   public:
     explicit JsonFileCreator(const QString& filePath = "gps_database.json");
 
     void createDefaultDatabase();
     QList<GpsDeviceEntry> loadDatabase();
 
-private:
+   private:
     QString jsonFilePath;
 };
 
-#endif // CODE_BASE_DEVICES_GPS_CONTROLLER_JSON_FILE_CREATOR_JSONFILECREATOR_H
-
+#endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_JSON_FILE_CREATOR_JSONFILECREATOR_H

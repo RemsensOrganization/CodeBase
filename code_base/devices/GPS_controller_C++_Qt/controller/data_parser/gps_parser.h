@@ -23,7 +23,6 @@ private:
     GpsData latest;
     bool gotGGA = false;
     bool gotRMC = false;
-
 };
 
-#endif // CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_PARSER_GPS_PARSER_H
+#endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_PARSER_GPS_PARSER_H
