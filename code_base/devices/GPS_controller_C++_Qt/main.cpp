@@ -13,12 +13,12 @@ int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
     gps_controller controller;
     QString logFilePath;
-    // logFilePath =
-    // "D:/programming/Qt/build-TrackerGPS-Desktop_Qt_5_12_5_MSVC2015_64bit-Debug/gps_log.txt";
+    logFilePath =
+        "D:/programming/Qt/"
+        "build-TrackerGPS-Desktop_Qt_5_12_5_MSVC2015_64bit-Debug/gps_log.txt";  // закомментировать если не нужно сохранять в файл
 
     QObject::connect(&controller, &gps_controller::gpsUpdated,
                      [&](const GpsData &data) {
-                         qDebug() << "[main]" << data.toString();
                          if (!logFilePath.isEmpty()) {
                              saveGpsDataToFile(data, logFilePath);
                          }

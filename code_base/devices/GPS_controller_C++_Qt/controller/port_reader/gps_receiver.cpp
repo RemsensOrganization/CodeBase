@@ -9,11 +9,6 @@
 GPSReceiver::GPSReceiver(QObject *parent) : QObject(parent) {}
 
 void GPSReceiver::startInThread(const QString &portName, int baudRate) {
-    // Убедиться, что нас вызвали не из GUI потока
-    qDebug() << "GPSReceiver thread:" << QThread::currentThread();
-    // при необходимости:
-    // Q_ASSERT(QThread::currentThread() != qApp->thread());
-
     if (running) return;
     running = true;
     readLoop(portName, baudRate);

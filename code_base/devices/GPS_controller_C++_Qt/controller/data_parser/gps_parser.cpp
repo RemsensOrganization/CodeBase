@@ -1,4 +1,4 @@
-#include "controller/data_parser/gps_parser.h"
+#include "data_parser/gps_parser.h"
 
 #include <QDebug>
 

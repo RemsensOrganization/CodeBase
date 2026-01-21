@@ -19,6 +19,12 @@ struct GpsData {
     QString toString() const {
         QStringList parts;
 
+        bool inRange = true;
+        if (latitude < -90.0 || latitude > 90.0) inRange = false;
+        if (longitude < -180.0 || longitude > 180.0) inRange = false;
+        if (satellites < 0 || satellites > 32) inRange = false;
+        if (speedKmh < 0.0) inRange = false;
+
         if (valid) {
             parts << QString("Координаты: %1, %2")
                          .arg(latitude, 0, 'f', 6)

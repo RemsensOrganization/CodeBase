@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "controller/data/gps_data.h"
+#include "data/gps_data.h"
 
 class GPSParser : public QObject {
     Q_OBJECT

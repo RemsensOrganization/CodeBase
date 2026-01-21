@@ -9,18 +9,12 @@
 #include "controller/port_reader/gps_receiver.h"
 
 gps_controller::gps_controller(QObject *parent) : QObject(parent) {
-    qDebug() << "gps_controller thread:" << QThread::currentThread();
-    qDebug() << "main thread:" << qApp->thread();
-    Q_ASSERT(QThread::currentThread() == qApp->thread());
-
     detector = new GpsPortAutoDetector(this);
     receiver = new GPSReceiver();
     parser = new GPSParser();
 
     receiver->moveToThread(&receiverThread);
     parser->moveToThread(&receiverThread);
-    Q_ASSERT(receiver->thread() == &receiverThread);
-    Q_ASSERT(parser->thread() == &receiverThread);
 
     connect(&receiverThread, &QThread::finished, receiver,
             &QObject::deleteLater);
@@ -54,6 +48,5 @@ void gps_controller::start(const QString &portName, int baudRate) {
 void gps_controller::stop() { emit stopReceiver(); }
 
 void gps_controller::handleParsedData(const GpsData &data) {
-    // qDebug() << "[gps_tracker]" << data.toString();
     emit gpsUpdated(data);
 }
