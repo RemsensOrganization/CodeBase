@@ -17,16 +17,21 @@ constexpr int kRmcCoursePartIndex = 8;
 constexpr int kRmcDatePartIndex = 9;
 constexpr int kGgaAltitudeFieldPartIndex = 9;
 constexpr double kMileToKmConversion = 1.852;
+constexpr double kMinLatitudeValue = -90;
+constexpr double kMaxLatitudeValue = 90;
+constexpr double kMinLongitudeValue = -180;
+constexpr double kMaxLongitudeValue = 180;
+constexpr int kMaxNumberSatellites = 32;
 
 namespace {
 bool isLatitudeValid(const double latitude) {
-    return (latitude >= -90.0 || latitude <= 90.0);
+    return (latitude >= kMinLatitudeValue && latitude <= kMaxLatitudeValue);
 };
 bool isLongitudeValid(const double longitude) {
-    return (longitude >= -180.0 || longitude <= 180.0);
+    return (longitude >= kMinLongitudeValue && longitude <= kMaxLongitudeValue);
 };
 bool isSatellitesNumberValid(const int satellites) {
-    return (satellites > 0 || satellites <= 32);
+    return (satellites >= 0 && satellites <= kMaxNumberSatellites);
 };
 bool isSpeedValueValid(const double speedKmh) { return (speedKmh >= 0.0); }
 }  // end namespace
@@ -34,15 +39,17 @@ bool isSpeedValueValid(const double speedKmh) { return (speedKmh >= 0.0); }
 GPSParser::GPSParser(QObject *parent) : QObject(parent) {}
 
 void GPSParser::parseLine(const QString &line) {
+    static bool isGGA_Ready = false;
+    static bool isRMC_Ready = false;
     if (line.startsWith("$GPGGA")) {
-        parseGpgga(line);
+        parseGpgga(line, isGGA_Ready);
     } else if (line.startsWith("$GPRMC")) {
-        parseGprmc(line);
+        parseGprmc(line, isGGA_Ready);
     }
-    if (gotGGA && gotRMC) {
+    if (isGGA_Ready && isRMC_Ready) {
         emit gpsUpdated(data);
-        gotGGA = false;
-        gotRMC = false;
+        isGGA_Ready = false;
+        isRMC_Ready = false;
     }
 }
 
@@ -59,7 +66,7 @@ double GPSParser::convertCoord(const QString &coord, const QString &dir) {
     return decimal;
 }
 
-void GPSParser::parseGpgga(const QString &line) {
+void GPSParser::parseGpgga(const QString &line, bool &isValid) {
     QStringList parts = line.split(",");
     if (parts.size() < kMaxGgaNumberOfParts) return;
 
@@ -72,10 +79,10 @@ void GPSParser::parseGpgga(const QString &line) {
         return;
     }
 
-    gotGGA = true;
+    isValid = true;
 }
 
-void GPSParser::parseGprmc(const QString &line) {
+void GPSParser::parseGprmc(const QString &line, bool &isValid) {
     QStringList parts = line.split(",");
     if (parts.size() < kMaxRmcNumberOfParts) return;
 
@@ -101,5 +108,5 @@ void GPSParser::parseGprmc(const QString &line) {
         data.course = parts[kRmcCoursePartIndex].toDouble();
         data.date = parts[kRmcDatePartIndex];
     }
-    gotRMC = true;
+    isValid = true;
 }

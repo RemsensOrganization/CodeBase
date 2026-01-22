@@ -19,12 +19,10 @@ signals:
 
 private:
     double convertCoord(const QString &coord, const QString &dir);
-    void parseGpgga(const QString &line);
-    void parseGprmc(const QString &line);
+    void parseGpgga(const QString &line, bool &isValid);
+    void parseGprmc(const QString &line, bool &isValid);
 
     GpsData data;
-    bool gotGGA = false;
-    bool gotRMC = false;
 };
 
 #endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_PARSER_GPS_PARSER_H

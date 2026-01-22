@@ -36,8 +36,6 @@ static const QByteArray RMC_VALID =
 
 void TestsParser::test_gga_rmc_pair() {
     GPSParser parser;
-    QSignalSpy spy(&parser, SIGNAL(gpsUpdated(GpsData)));
-
     parser.parseLine(QString::fromLatin1(GGA_VALID));
     parser.parseLine(QString::fromLatin1(RMC_VALID));
 
