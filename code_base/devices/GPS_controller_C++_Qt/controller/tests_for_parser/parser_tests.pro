@@ -15,4 +15,3 @@ include($$ROOT_DIR/data_parser/gps_parser.pri)
 
 SOURCES += parser_tests.cpp
 HEADERS += parser_tests.h
-

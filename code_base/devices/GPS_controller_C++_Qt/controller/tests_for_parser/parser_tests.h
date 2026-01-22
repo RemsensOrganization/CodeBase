@@ -4,11 +4,11 @@
 #include <QObject>
 #include <QtTest>
 
-class UnitTests : public QObject {
+class TestsParser : public QObject {
     Q_OBJECT
 
 public:
-    UnitTests();
+    TestsParser();
 
 private slots:
     void
@@ -18,8 +18,6 @@ private slots:
     void init();  // Вызывается перед каждым тестовым методом
     void cleanup();  // Вызывается после каждого тестового метода
 
-    void test_gga_only();
-    void test_rmc_only();
     void test_gga_rmc_pair();
     void test_broken_lines();
 };

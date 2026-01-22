@@ -7,6 +7,8 @@
 
 class GPSParser : public QObject {
     Q_OBJECT
+    friend class TestsParser;
+
 public:
     explicit GPSParser(QObject *parent = nullptr);
 
@@ -20,7 +22,7 @@ private:
     void parseGpgga(const QString &line);
     void parseGprmc(const QString &line);
 
-    GpsData latest;
+    GpsData data;
     bool gotGGA = false;
     bool gotRMC = false;
 };

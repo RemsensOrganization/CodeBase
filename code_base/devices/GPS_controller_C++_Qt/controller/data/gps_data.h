@@ -6,26 +6,20 @@
 #include <QStringList>
 
 struct GpsData {
+    bool isRangeValid = true;
     double latitude = 0.0;
     double longitude = 0.0;
     double altitude = 0.0;
     QString timeUtc;
     QString date;
-    bool valid = false;
+    bool valid_gps_flag = false;
     int satellites = 0;
     double speedKmh = 0.0;
     double course = 0.0;
 
     QString toString() const {
         QStringList parts;
-
-        bool inRange = true;
-        if (latitude < -90.0 || latitude > 90.0) inRange = false;
-        if (longitude < -180.0 || longitude > 180.0) inRange = false;
-        if (satellites < 0 || satellites > 32) inRange = false;
-        if (speedKmh < 0.0) inRange = false;
-
-        if (valid) {
+        if (valid_gps_flag) {
             parts << QString("Координаты: %1, %2")
                          .arg(latitude, 0, 'f', 6)
                          .arg(longitude, 0, 'f', 6);
