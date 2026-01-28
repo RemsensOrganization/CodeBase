@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QThread>
 
-#include "controller/data/gps_data.h"
+#include "data/gps_data.h"
 
 class gps_controller : public QObject {
     Q_OBJECT

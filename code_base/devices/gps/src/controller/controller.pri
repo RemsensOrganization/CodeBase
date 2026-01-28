@@ -9,8 +9,5 @@ include(data_parser/gps_parser.pri)
 CONTROLLER_DIR = $$PWD
 
 INCLUDEPATH += $$CONTROLLER_DIR
-SOURCES += \
-$$CONTROLLER_DIR/gps_controller.cpp\
-
-HEADERS += \
-$$CONTROLLER_DIR/gps_controller.h
+SOURCES += $$CONTROLLER_DIR/controller.cpp
+HEADERS += $$CONTROLLER_DIR/controller.h

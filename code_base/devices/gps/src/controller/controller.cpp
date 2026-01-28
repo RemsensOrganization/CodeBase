@@ -1,12 +1,12 @@
-#include "controller/gps_controller.h"
+#include "controller.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
 
-#include "controller/data_parser/gps_parser.h"
-#include "controller/devices_ports_explorer/gps_port_autodetector.h"
-#include "controller/port_reader/gps_receiver.h"
+#include "data_parser/gps_parser.h"
+#include "devices_ports_explorer/gps_port_autodetector.h"
+#include "port_reader/gps_receiver.h"
 
 gps_controller::gps_controller(QObject *parent) : QObject(parent) {
     detector = new GpsPortAutoDetector(this);

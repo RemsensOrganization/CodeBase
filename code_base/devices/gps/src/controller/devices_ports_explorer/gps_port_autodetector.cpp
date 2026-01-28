@@ -1,8 +1,6 @@
-#include "controller/devices_ports_explorer/gps_port_autodetector.h"
+#include "devices_ports_explorer/gps_port_autodetector.h"
 
 #include <QDebug>
-
-#include "controller/json_file_creator/json_file_creator.h"
 
 GpsPortAutoDetector::GpsPortAutoDetector(QObject* parent) : QObject(parent) {
     JsonFileCreator db("gps_database.json");

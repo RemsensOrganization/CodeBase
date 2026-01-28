@@ -1,21 +1,18 @@
-#include <controller/devices_ports_explorer/gps_port_autodetector.h>
+#include <devices_ports_explorer/gps_port_autodetector.h>
 
 #include <QApplication>
 #include <QDebug>
 
-#include "controller/gps_controller.h"
+#include "controller.h"
 
 extern void saveGpsDataToFile(const GpsData &data, const QString &filePath);
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<GpsData>("GpsData");
 
-    QCoreApplication app(argc, argv);
+    QApplication app(argc, argv);
     gps_controller controller;
-    QString logFilePath;
-    logFilePath =
-        "D:/programming/Qt/"
-        "build-TrackerGPS-Desktop_Qt_5_12_5_MSVC2015_64bit-Debug/gps_log.txt";  // закомментировать если не нужно сохранять в файл
+    QString logFilePath = QApplication::applicationDirPath() + "/gps_log.txt";
 
     QObject::connect(&controller, &gps_controller::gpsUpdated,
                      [&](const GpsData &data) {

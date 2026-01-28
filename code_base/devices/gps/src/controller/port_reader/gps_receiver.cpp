@@ -1,10 +1,13 @@
-#include "controller/port_reader/gps_receiver.h"
+#include "port_reader/gps_receiver.h"
 
 #include <Windows.h>
-#include <controller/devices_ports_explorer/gps_port_autodetector.h>
+#include <devices_ports_explorer/gps_port_autodetector.h>
 
 #include <QDebug>
 #include <QThread>
+
+constexpr int GPS_READ_TIMEOUT_MS = 2000;
+constexpr int TRY_TO_RECONNECT_INTERVAL_MS = 5000;
 
 GPSReceiver::GPSReceiver(QObject *parent) : QObject(parent) {}
 
@@ -50,7 +53,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
     }
 
     while (running) {
-        if (gps.isOpen() && gps.waitForReadyRead(2000)) {
+        if (gps.isOpen() && gps.waitForReadyRead(GPS_READ_TIMEOUT_MS)) {
             QByteArray chunk = gps.readAll();
             if (!chunk.isEmpty()) {
                 emit getDataReceived(chunk);
@@ -74,7 +77,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
                 }
                 if (!reconnected) {
                     qDebug() << "Ожидание устройства...";
-                    Sleep(5000);
+                    Sleep(TRY_TO_RECONNECT_INTERVAL_MS);
                 }
             }
         }
