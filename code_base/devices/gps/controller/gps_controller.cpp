@@ -40,7 +40,7 @@ gps_controller::~gps_controller() {
     receiverThread.wait();
 }
 
-void gps_controller::start(const QString &portName, int baudRate) {
+void gps_controller::start(const QString &portName, int baudRate = 9600) {
     detector->FindPorts();
     emit startReceiver(portName, baudRate);
 }

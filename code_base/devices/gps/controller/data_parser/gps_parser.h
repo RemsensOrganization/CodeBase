@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "data/gps_data.h"
+#include "../data/gps_data.h"
 
 class GPSParser : public QObject {
     Q_OBJECT
@@ -24,5 +24,5 @@ private:
 
     GpsData data;
 };
-
+Q_DECLARE_METATYPE(GpsData)
 #endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_PARSER_GPS_PARSER_H

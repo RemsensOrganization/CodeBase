@@ -2,26 +2,30 @@
 
 #include <QDebug>
 
-constexpr int kMaxGgaNumberOfParts = 14;
-constexpr int kMaxRmcNumberOfParts = 13;
+constexpr double kMinLongitudeValue = -180;
+constexpr double kMinLatitudeValue = -90;
+constexpr double kMaxLatitudeValue = 90;
+constexpr double kMaxLongitudeValue = 180;
+
 constexpr int kGgaTimeUtcPartIndex = 1;
+constexpr int kGgaValidGpsFlagPartIndex = 6;
+constexpr int kGgaSatellitesPartIndex = 7;
+constexpr int kGgaAltitudeFieldPartIndex = 9;
+
 constexpr int kRmcStatusPartIndex = 2;
 constexpr int kRmcLatitudeFieldPartIndex = 3;
 constexpr int kRmcLatitudeFieldPartDirection = 4;
 constexpr int kRmcLongitudeFieldPartIndex = 5;
 constexpr int kRmcLongitudeFieldPartDirection = 6;
-constexpr int kGgaValidGpsFlagPartIndex = 6;
-constexpr int kGgaSatellitesPartIndex = 7;
 constexpr int kRmcSpeedPartIndex = 7;
 constexpr int kRmcCoursePartIndex = 8;
 constexpr int kRmcDatePartIndex = 9;
-constexpr int kGgaAltitudeFieldPartIndex = 9;
-constexpr double kMileToKmConversion = 1.852;
-constexpr double kMinLatitudeValue = -90;
-constexpr double kMaxLatitudeValue = 90;
-constexpr double kMinLongitudeValue = -180;
-constexpr double kMaxLongitudeValue = 180;
+
+constexpr int kMaxRmcNumberOfParts = 13;
+constexpr int kMaxGgaNumberOfParts = 14;
 constexpr int kMaxNumberSatellites = 32;
+
+constexpr double kMileToKmConversion = 1.852;
 
 namespace {
 bool isLatitudeValid(const double latitude) {
@@ -41,10 +45,11 @@ GPSParser::GPSParser(QObject *parent) : QObject(parent) {}
 void GPSParser::parseLine(const QString &line) {
     static bool isGGA_Ready = false;
     static bool isRMC_Ready = false;
+
     if (line.startsWith("$GPGGA")) {
         parseGpgga(line, isGGA_Ready);
     } else if (line.startsWith("$GPRMC")) {
-        parseGprmc(line, isGGA_Ready);
+        parseGprmc(line, isRMC_Ready);
     }
     if (isGGA_Ready && isRMC_Ready) {
         emit gpsUpdated(data);

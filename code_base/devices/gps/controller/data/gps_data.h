@@ -49,6 +49,5 @@ struct GpsData {
         return parts.join(" | ");
     }
 };
-Q_DECLARE_METATYPE(GpsData)
 
 #endif  // CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_GPS_DATA_H
