@@ -1,1 +1,5 @@
-include(controller/controller.pri)
+include(gps/data/gps_data.pri)
+include(gps/data_parser/gps_parser.pri)
+include(gps/devices_ports_explorer/gps_port_autodetector.pri)
+include(gps/json_file_creator/json_file_creator.pri)
+include(gps/port_reader/gps_receiver.pri)

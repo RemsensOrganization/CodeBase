@@ -1,9 +1,9 @@
 #ifndef CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_PARSER_GPS_PARSER_H
 #define CODE_BASE_DEVICES_GPS_CONTROLLER_DATA_PARSER_GPS_PARSER_H
 
-#include <QObject>
+#include <gps_data.h>
 
-#include "../data/gps_data.h"
+#include <QObject>
 
 class GPSParser : public QObject {
     Q_OBJECT

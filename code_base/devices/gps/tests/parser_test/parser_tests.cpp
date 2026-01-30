@@ -4,8 +4,8 @@
 #include <QSignalSpy>
 #include <QtTest>
 
-#include "../../src/controller/data/gps_data.h"
-#include "../../src/controller/data_parser/gps_parser.h"
+#include "gps_data.h"
+#include "gps_parser.h"
 
 namespace {}  // end namespace
 

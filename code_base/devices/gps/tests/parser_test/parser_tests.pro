@@ -1,17 +1,12 @@
 QT += core testlib serialport
-CONFIG += console testcase
+
+CONFIG += console testcase c++11
+
+TARGET = parser_tests
+
 TEMPLATE = app
-TARGET = gps_parser_tests
 
-CONFIG += c++11
-DEFINES += QT_DEPRECATED_WARNINGS
-
-ROOT_DIR = $$PWD/../..
-
-message("ROOT_DIR = $$ROOT_DIR")
-message("src.pri = $$ROOT_DIR/src/src.pri")
-
-include($$ROOT_DIR/src/src.pri)
+include(../../src/src.pri)
 
 SOURCES += parser_tests.cpp
 HEADERS += parser_tests.h

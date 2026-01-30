@@ -1,4 +1,4 @@
-#include "json_file_creator/json_file_creator.h"
+#include "json_file_creator.h"
 
 #include <QDebug>
 #include <QFile>

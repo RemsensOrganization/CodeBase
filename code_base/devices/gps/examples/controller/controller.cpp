@@ -4,9 +4,9 @@
 #include <QDebug>
 #include <QThread>
 
-#include "data_parser/gps_parser.h"
-#include "devices_ports_explorer/gps_port_autodetector.h"
-#include "port_reader/gps_receiver.h"
+#include "gps_parser.h"
+#include "gps_port_autodetector.h"
+#include "gps_receiver.h"
 
 gps_controller::gps_controller(QObject *parent) : QObject(parent) {
     detector = new GpsPortAutoDetector(this);
@@ -40,7 +40,7 @@ gps_controller::~gps_controller() {
     receiverThread.wait();
 }
 
-void gps_controller::start(const QString &portName, int baudRate = 9600) {
+void gps_controller::start(const QString &portName, int baudRate) {
     detector->FindPorts();
     emit startReceiver(portName, baudRate);
 }

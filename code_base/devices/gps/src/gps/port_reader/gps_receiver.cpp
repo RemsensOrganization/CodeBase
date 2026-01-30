@@ -1,7 +1,7 @@
-#include "port_reader/gps_receiver.h"
+#include "gps_receiver.h"
 
 #include <Windows.h>
-#include <devices_ports_explorer/gps_port_autodetector.h>
+#include <gps_port_autodetector.h>
 
 #include <QDebug>
 #include <QThread>

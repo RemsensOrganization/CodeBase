@@ -1,7 +1,7 @@
 #ifndef GPS_PORT_AUTODETECTOR_H
 #define GPS_PORT_AUTODETECTOR_H
 
-#include <json_file_creator/json_file_creator.h>
+#include <json_file_creator.h>
 
 #include <QObject>
 #include <QSerialPortInfo>

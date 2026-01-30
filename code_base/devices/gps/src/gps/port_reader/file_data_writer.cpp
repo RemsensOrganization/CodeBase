@@ -2,7 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "data/gps_data.h"
+#include "gps_data.h"
 
 void saveGpsDataToFile(const GpsData &data, const QString &filePath) {
     QFile file(filePath);

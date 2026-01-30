@@ -1,4 +1,4 @@
-#include <devices_ports_explorer/gps_port_autodetector.h>
+#include <gps_port_autodetector.h>
 
 #include <QApplication>
 #include <QDebug>

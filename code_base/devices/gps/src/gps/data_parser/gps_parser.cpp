@@ -1,11 +1,12 @@
-#include "data_parser/gps_parser.h"
+#include "gps_parser.h"
 
 #include <QDebug>
 
 constexpr double kMinLongitudeValue = -180;
+constexpr double kMaxLongitudeValue = 180;
+
 constexpr double kMinLatitudeValue = -90;
 constexpr double kMaxLatitudeValue = 90;
-constexpr double kMaxLongitudeValue = 180;
 
 constexpr int kGgaTimeUtcPartIndex = 1;
 constexpr int kGgaValidGpsFlagPartIndex = 6;
@@ -91,7 +92,7 @@ void GPSParser::parseGprmc(const QString &line, bool &isValid) {
     QStringList parts = line.split(",");
     if (parts.size() < kMaxRmcNumberOfParts) return;
 
-    if (parts[2] == "A") {
+    if (parts[kRmcStatusPartIndex] == "A") {
         data.latitude = convertCoord(parts[kRmcLatitudeFieldPartIndex],
                                      parts[kRmcLatitudeFieldPartDirection]);
         if (!isLatitudeValid(data.latitude)) {

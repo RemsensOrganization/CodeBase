@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QThread>
 
-#include "data/gps_data.h"
+#include "gps_data.h"
 
 class gps_controller : public QObject {
     Q_OBJECT
@@ -12,7 +12,7 @@ public:
     explicit gps_controller(QObject *parent = nullptr);
     ~gps_controller();
 
-    void start(const QString &portName, int baudRate);
+    void start(const QString &portName, int baudRate = 9600);
     void stop();
 
 signals:
