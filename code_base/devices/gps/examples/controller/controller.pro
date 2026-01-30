@@ -4,9 +4,9 @@ TARGET = GPS_Controller
 
 TEMPLATE = app
 
-CONFIG += c++11 console?
+CONFIG += c++11
 
-include(../../src/src.pri)
+include(../../src/gps.pri)
 
 SOURCES += main.cpp controller.cpp
 HEADERS += controller.h

@@ -6,7 +6,7 @@ TARGET = parser_tests
 
 TEMPLATE = app
 
-include(../../src/src.pri)
+include(../../src/gps.pri)
 
 SOURCES += parser_tests.cpp
 HEADERS += parser_tests.h
