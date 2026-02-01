@@ -9,8 +9,6 @@
 constexpr int GPS_READ_TIMEOUT_MS = 2000;
 constexpr int TRY_TO_RECONNECT_INTERVAL_MS = 5000;
 
-GPSReceiver::GPSReceiver(QObject *parent) : QObject(parent) {}
-
 void GPSReceiver::startInThread(const QString &portName, int baudRate) {
     if (running.load(std::memory_order_relaxed)) return;
     running.store(true, std::memory_order_relaxed);
