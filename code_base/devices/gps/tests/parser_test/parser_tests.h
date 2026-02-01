@@ -1,5 +1,5 @@
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef DEVICES_GPS_TESTS_PARSER_TEST_PARSER_TESTS_H_
+#define DEVICES_GPS_TESTS_PARSER_TEST_PARSER_TESTS_H_
 
 #include <QObject>
 #include <QtTest>
@@ -22,4 +22,4 @@ private slots:
     void test_broken_lines();
 };
 
-#endif  // UNITTESTS_H
+#endif  // DEVICES_GPS_TESTS_PARSER_TEST_PARSER_TESTS_H_
