@@ -10,3 +10,4 @@ include(../../src/gps.pri)
 
 SOURCES += parser_tests.cpp
 HEADERS += parser_tests.h
+

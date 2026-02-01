@@ -12,14 +12,16 @@ constexpr int TRY_TO_RECONNECT_INTERVAL_MS = 5000;
 GPSReceiver::GPSReceiver(QObject *parent) : QObject(parent) {}
 
 void GPSReceiver::startInThread(const QString &portName, int baudRate) {
-    if (running.load()) return;
-    running.store(true);
+    if (running) return;
+    running = true;
     readLoop(portName, baudRate);
 }
 
-void GPSReceiver::stopInThread() { running.store(false); }
+void GPSReceiver::stopInThread() { running = false; }
 
 void GPSReceiver::readLoop(const QString &portName, int baudRate) {
+    running = true;
+
     QSerialPort gps;
     gps.setBaudRate(baudRate);
     gps.setDataBits(QSerialPort::Data8);
@@ -41,7 +43,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
             return;
         }
     }
-
+    qDebug() << "Target port: " << targetPort;
     gps.setPortName(targetPort);
 
     if (!gps.open(QIODevice::ReadOnly)) {
@@ -50,7 +52,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
         qDebug() << "GPS подключен к" << targetPort;
     }
 
-    while (running.load()) {
+    while (running) {
         if (gps.isOpen() && gps.waitForReadyRead(GPS_READ_TIMEOUT_MS)) {
             QByteArray chunk = gps.readAll();
             if (!chunk.isEmpty()) {
@@ -61,7 +63,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
             gps.close();
 
             bool reconnected = false;
-            while (running.load() && !reconnected) {
+            while (running && !reconnected) {
                 auto detectedPorts = QSerialPortInfo::availablePorts();
                 for (const QSerialPortInfo &portInfo : detectedPorts) {
                     if (portInfo.portName() == targetPort) {

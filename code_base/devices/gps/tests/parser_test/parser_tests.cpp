@@ -1,40 +1,27 @@
 #include "parser_tests.h"
 
 #include <QDebug>
-#include <QSignalSpy>
 #include <QtTest>
 
-#include "gps_data.h"
 #include "gps_parser.h"
 
-namespace {}  // end namespace
+namespace mock {
+
+const char GGA_VALID[] =
+    "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,,,*47\r\n";
+const char RMC_VALID[] =
+    "$GPRMC,123519,A,53.23,N,01131.000,E,10.0,90.0,010203,,,A*6C\r\n";
+
+const char GGA_BROKEN[] = "$GPGGA,123519,4807.038,N*47\r\n";
+const char RMC_BROKEN[] = "$GPRMC,123519,A,4807.038,N*6C\r\n";
+
+}  // namespace mock
 
 TestsParser::TestsParser() {}
 
-void TestsParser::initTestCase() {
-    // Инициализация перед запуском всех тестов
-    qRegisterMetaType<GpsData>("GpsData");
-}
-
-void TestsParser::cleanupTestCase() {
-    // Очистка после выполнения всех тестов
-}
-
-void TestsParser::init() {
-    // Инициализация перед каждым тестом
-}
-
-void TestsParser::cleanup() {
-    // Очистка после каждого теста
-}
-
-static const QByteArray GGA_VALID =
-    "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,,,*47\r\n";
-
-static const QByteArray RMC_VALID =
-    "$GPRMC,123519,A,53.23,N,01131.000,E,10.0,90.0,010203,,,A*6C\r\n";
-
 void TestsParser::test_gga_rmc_pair() {
+    QByteArray GGA_VALID(mock::GGA_VALID);
+    QByteArray RMC_VALID(mock::RMC_VALID);
     GPSParser parser;
     parser.parseLine(QString::fromLatin1(GGA_VALID));
     parser.parseLine(QString::fromLatin1(RMC_VALID));
@@ -52,10 +39,8 @@ void TestsParser::test_gga_rmc_pair() {
 
 void TestsParser::test_broken_lines() {
     GPSParser parser;
-
-    QByteArray brokenGga = "$GPGGA,123519,4807.038,N*47\r\n";
-    QByteArray brokenRmc = "$GPRMC,123519,A,4807.038,N*6C\r\n";
-
+    QByteArray brokenGga(mock::GGA_BROKEN);
+    QByteArray brokenRmc(mock::RMC_BROKEN);
     parser.parseLine(QString::fromLatin1(brokenGga));
     parser.parseLine(QString::fromLatin1(brokenRmc));
 

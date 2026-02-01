@@ -4,20 +4,22 @@
 #include <QObject>
 #include <QtTest>
 
+namespace mock {
+
+extern const char GGA_VALID[];
+extern const char RMC_VALID[];
+
+extern const char GGA_BROKEN[];
+extern const char RMC_BROKEN[];
+
+}  // namespace mock
+
 class TestsParser : public QObject {
     Q_OBJECT
-
 public:
     TestsParser();
 
 private slots:
-    void
-    initTestCase();  // Вызывается перед выполнением первого тестового метода
-    void cleanupTestCase();  // Вызывается после выполнения последнего тестового
-                             // метода
-    void init();  // Вызывается перед каждым тестовым методом
-    void cleanup();  // Вызывается после каждого тестового метода
-
     void test_gga_rmc_pair();
     void test_broken_lines();
 };

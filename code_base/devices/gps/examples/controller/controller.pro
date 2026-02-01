@@ -6,9 +6,12 @@ TEMPLATE = app
 
 CONFIG += c++11
 
-include(../../src/gps.pri)
+SRC_DIR = ../../src
+include($$SRC_DIR/gps.pri)
 
-SOURCES += main.cpp controller.cpp
+SOURCES += main.cpp\
+           controller.cpp
+
 HEADERS += controller.h
 
-INCLUDEPATH += $$PWD/../../src
+INCLUDEPATH += $$SRC_DIR
