@@ -12,14 +12,11 @@ public:
     explicit gps_controller(QObject *parent = nullptr);
     ~gps_controller();
 
-    void start(const QString &portName, int baudRate = 9600);
+    void start(const QString &portName, const int baudRate = 9600);
     void stop();
 
 signals:
     void gpsUpdated(const GpsData &data);
-
-    void startReceiver(const QString &portName, int baudRate);
-    void stopReceiver();
 
 private slots:
     void handleParsedData(const GpsData &data);

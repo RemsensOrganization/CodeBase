@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QSerialPort>
 
+#include "atomic"
+
 class GPSReceiver : public QObject {
     Q_OBJECT
 
@@ -19,7 +21,7 @@ signals:
 private:
     void readLoop(const QString &portName, int baudRate);
 
-    bool running = false;
+    std::atomic<bool> running{false};
 };
 
 #endif  // DEVICES_GPS_SRC_PORT_READER_GPS_RECEIVER_H_
