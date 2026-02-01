@@ -6,6 +6,13 @@
 
 #include "atomic"
 
+namespace msgs {
+
+extern const char kGpsMsgIsNotAvailabel[];
+extern const char kGpsMsgIsWaitingForDevice[];
+
+}  // end namespace msgs
+
 class GPSReceiver : public QObject {
     Q_OBJECT
 

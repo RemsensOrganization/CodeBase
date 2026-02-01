@@ -9,6 +9,13 @@
 constexpr int GPS_READ_TIMEOUT_MS = 2000;
 constexpr int TRY_TO_RECONNECT_INTERVAL_MS = 5000;
 
+namespace msgs {
+
+const char kGpsMsgIsNotAvailabel[] = "GPS device is not available";
+const char kGpsMsgIsWaitingForDevice[] = "Waiting for GPS device...";
+
+}  // end namespace msgs
+
 void GPSReceiver::startInThread(const QString &portName, int baudRate) {
     if (running.load(std::memory_order_relaxed)) return;
     running.store(true, std::memory_order_relaxed);
@@ -37,7 +44,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
             targetPort = gpsPorts.first().portName();
             qDebug() << "Автоматически выбран порт:" << targetPort;
         } else {
-            qWarning() << "GPS‑порт не найден!";
+            qWarning() << QString(msgs::kGpsMsgIsNotAvailabel);
             return;
         }
     }
@@ -74,7 +81,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
                     }
                 }
                 if (!reconnected) {
-                    qDebug() << "Ожидание устройства...";
+                    qDebug() << QString(msgs::kGpsMsgIsWaitingForDevice);
                     Sleep(TRY_TO_RECONNECT_INTERVAL_MS);
                 }
             }
