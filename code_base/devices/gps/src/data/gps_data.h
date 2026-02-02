@@ -42,6 +42,7 @@ struct GpsData {
             parts << QString("Satellites: %1").arg(satellites);
             parts << QString("Speed: %1 km/h").arg(speedKmh, 0, 'f', 1);
             parts << QString("Course: %1°").arg(course, 0, 'f', 1);
+            parts << "\n";
         } else {
             parts << "No valid data";
         }

@@ -8,9 +8,9 @@ void saveGpsDataToFile(const GpsData &data, const QString &filePath) {
     QFile file(filePath);
     if (file.open(QIODevice::Append | QIODevice::Text)) {
         QTextStream out(&file);
-        out << data.toString() << "\n";
+        out << data.toString();
         out.flush();
     } else {
-        qDebug() << "[FileWriter] Error: Failed to open file";
+        qDebug() << file.errorString();
     }
 }
