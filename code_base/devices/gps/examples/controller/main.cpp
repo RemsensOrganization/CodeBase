@@ -1,22 +1,18 @@
-#include <QApplication>
+#include <QCoreApplication>
 
 #include "controller.h"
-#include "file_data_writer.cpp"
 #include "gps_data.h"
+#include "gps_logger.h"
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<GpsData>("GpsData");
 
-    QApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
     gps_controller controller;
-    QString logFilePath = QApplication::applicationDirPath() + "/gps_log.txt";
 
-    QObject::connect(&controller, &gps_controller::gpsUpdated,
-                     [&](const GpsData &data) {
-                         if (!logFilePath.isEmpty()) {
-                             saveGpsDataToFile(data, logFilePath);
-                         }
-                     });
+    QObject::connect(
+        &controller, &gps_controller::gpsUpdated,
+        [&](const GpsData &data) { logger::saveGpsDataToLogFile(data); });
 
     controller.start("COM2", 9600);
 

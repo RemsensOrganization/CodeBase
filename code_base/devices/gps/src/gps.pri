@@ -1,5 +1,5 @@
 include(data/gps_data.pri)
 include(data_parser/gps_parser.pri)
-include(devices_ports_explorer/gps_port_autodetector.pri)
-include(json_file_creator/json_file_creator.pri)
+include(gps_port_autodetector/gps_port_autodetector.pri)
+include(gps_data_base/gps_data_base.pri)
 include(port_reader/gps_receiver.pri)

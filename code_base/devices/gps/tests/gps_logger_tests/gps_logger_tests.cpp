@@ -2,6 +2,15 @@
 
 #include <QDebug>
 
-void gps_logger_UnitTests ::gps_logger_save_to_file_Test() {}
+#include "gps_data.h"
+#include "gps_logger.cpp"
+
+void gps_logger_UnitTests ::gps_logger_save_to_file_Test() {
+    GpsData data;
+    data.latitude = 53.4;
+    data.longitude = 27.6;
+    data.valid_gps_flag = true;
+    logger::saveGpsDataToLogFile(data);
+}
 
 QTEST_MAIN(gps_logger_UnitTests)

@@ -1,4 +1,4 @@
-#include "json_file_creator.h"
+#include "gps_data_base.h"
 
 #include <QDebug>
 #include <QFile>
@@ -16,10 +16,9 @@ const char kJsonMsgDevicesLoaded[] = "Devices loaded";
 
 }  // namespace msgs
 
-JsonFileCreator::JsonFileCreator(const QString& filePath)
-    : jsonFilePath(filePath) {}
+GpsDataBase::GpsDataBase(const QString& filePath) : jsonFilePath(filePath) {}
 
-void JsonFileCreator::createDefaultDatabase() {
+void GpsDataBase::createDefaultDatabase() {
     if (QFile::exists(jsonFilePath)) return;
 
     QJsonArray deviceArray;
@@ -115,7 +114,7 @@ void JsonFileCreator::createDefaultDatabase() {
     qDebug() << QString(msgs::kJsonMsgFileCreated) << jsonFilePath;
 }
 
-QList<GpsDeviceEntry> JsonFileCreator::loadDatabase() {
+QList<GpsDeviceEntry> GpsDataBase::loadDatabase() {
     QList<GpsDeviceEntry> gpsDatabase;
 
     QFile file(jsonFilePath);
@@ -131,7 +130,7 @@ QList<GpsDeviceEntry> JsonFileCreator::loadDatabase() {
     }
 
     QJsonArray array = doc.array();
-    for (const QJsonValue& val : array) {
+    for (const QJsonValue& val : qAsConst(array)) {
         if (!val.isObject()) continue;
         QJsonObject obj = val.toObject();
 
@@ -144,7 +143,7 @@ QList<GpsDeviceEntry> JsonFileCreator::loadDatabase() {
         entry.pid = idObj["pid"].toString().toUpper();
 
         QJsonArray descArray = obj["description"].toArray();
-        for (const QJsonValue& word : descArray)
+        for (const QJsonValue& word : qAsConst(descArray))
             entry.keywords.append(word.toString().toLower());
 
         gpsDatabase.append(entry);

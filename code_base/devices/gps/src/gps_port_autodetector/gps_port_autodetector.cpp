@@ -12,7 +12,7 @@ const char kGpsMsgIsNotGpsPort[] = "Not a GPS port.";
 }  // end namespace msgs
 
 GpsPortAutoDetector::GpsPortAutoDetector(QObject* parent) : QObject(parent) {
-    JsonFileCreator db("gps_database.json");
+    GpsDataBase db("gps_database.json");
     db.createDefaultDatabase();
     gpsDatabase = db.loadDatabase();
 }
