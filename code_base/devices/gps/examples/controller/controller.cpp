@@ -47,6 +47,7 @@ void GpsController::handleParsedData(const GpsData &data) {
 void GpsController::handleCloseEvent() { releaseResources(); }
 
 void GpsController::releaseResources() {
+    qDebug() << "release GpsController resources";
     receiver->stopInThread();
     if (receiver) delete receiver;
     if (detector) delete detector;

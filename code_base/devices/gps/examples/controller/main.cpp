@@ -6,20 +6,18 @@
 
 #include "QDebug"
 #include "QThread"
-#include "Windows.h"  // IWYU pragma: keep
 #include "controller.h"
 #include "gps_data.h"
 #include "gps_logger.h"
 
 class GpsWidget : public QWidget {
 public:
-    GpsWidget(GpsController *gps_control) { controller = gps_control; };
+    GpsWidget(GpsController *gpsController) { controller = gpsController; };
 
 protected:
     void closeEvent(QCloseEvent *event) override {
         qDebug() << "GpsWidget closing event";
         event->ignore();
-        controller->stop();
         controller->releaseResources();
         event->accept();
     }

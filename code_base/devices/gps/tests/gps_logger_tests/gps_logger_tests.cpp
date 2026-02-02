@@ -11,7 +11,8 @@ void gps_logger_UnitTests ::gps_logger_save_to_file_Test() {
     data.longitude = 27.6;
     data.valid_gps_flag = true;
     for (int i = 0; i < 5; ++i) {
-        qDebug() << data.toString();
+        qDebug() << data.toArseniyString();
+        qDebug() << data.toCsvString();
         logger::saveGpsDataToLogFile(data);
     }
 }
