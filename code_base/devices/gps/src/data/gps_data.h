@@ -1,11 +1,9 @@
 #ifndef DEVICES_GPS_SRC_DATA_GPS_DATA_H_
 #define DEVICES_GPS_SRC_DATA_GPS_DATA_H_
 
-#include <QDebug>
-#include <QFile>
+#include <QMetaType>  // IWYU pragma: keep
 #include <QString>
 #include <QStringList>
-#include <QTextStream>
 
 struct GpsData {
     bool isRangeValid = true;
@@ -50,17 +48,7 @@ struct GpsData {
 
         return parts.join(" | ");
     }
-
-    void saveGpsDataToFile(const GpsData &data, const QString &filePath) {
-        QFile file(filePath);
-        if (file.open(QIODevice::Append | QIODevice::Text)) {
-            QTextStream out(&file);
-            out << data.toString() << "\n";
-            out.flush();
-        } else {
-            qDebug() << "[FileWriter] Error: Failed to open file";
-        }
-    }
 };
+Q_DECLARE_METATYPE(GpsData);
 
 #endif  // DEVICES_GPS_SRC_DATA_GPS_DATA_H_
