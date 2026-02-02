@@ -1,5 +1,5 @@
-#ifndef UNITTESTS_H
-#define UNITTESTS_H
+#ifndef DEVICES_GPS_TESTS_GPS_LOGGER_TESTS_GPS_LOGGER_TESTS_H_
+#define DEVICES_GPS_TESTS_GPS_LOGGER_TESTS_GPS_LOGGER_TESTS_H_
 
 #include <QObject>
 #include <QtTest>
@@ -11,4 +11,4 @@ private slots:
     void gps_logger_save_to_file_Test();
 };
 
-#endif  // UNITTESTS_H
+#endif  // DEVICES_GPS_TESTS_GPS_LOGGER_TESTS_GPS_LOGGER_TESTS_H_
