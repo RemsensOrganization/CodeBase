@@ -49,6 +49,6 @@ struct GpsData {
         return parts.join(" | ");
     }
 };
-Q_DECLARE_METATYPE(GpsData);
+Q_DECLARE_METATYPE(GpsData)
 
 #endif  // DEVICES_GPS_SRC_DATA_GPS_DATA_H_

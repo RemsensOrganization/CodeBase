@@ -24,5 +24,5 @@ private:
 
     GpsData data;
 };
-Q_DECLARE_METATYPE(GpsData)
+
 #endif  // DEVICES_GPS_SRC_DATA_PARSER_GPS_PARSER_H_
