@@ -6,6 +6,16 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+namespace msgs {
+
+const char kJsonMsgFailedToCreateJson[] = "Failed to create JSON:";
+const char kJsonMsgFileCreated[] = "JSON file created:";
+const char kJsonMsgFailedToOpen[] = "Failed to open JSON:";
+const char kJsonMsgInvalidFormat[] = "Invalid JSON format";
+const char kJsonMsgDevicesLoaded[] = "Devices loaded";
+
+}  // namespace msgs
+
 JsonFileCreator::JsonFileCreator(const QString& filePath)
     : jsonFilePath(filePath) {}
 
@@ -96,13 +106,13 @@ void JsonFileCreator::createDefaultDatabase() {
     QJsonDocument doc(deviceArray);
     QFile file(jsonFilePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qWarning() << "Не удалось создать JSON:" << jsonFilePath;
+        qWarning() << QString(msgs::kJsonMsgFailedToCreateJson) << jsonFilePath;
         return;
     }
 
     file.write(doc.toJson(QJsonDocument::Indented));
     file.close();
-    qDebug() << "JSON-файл создан:" << jsonFilePath;
+    qDebug() << QString(msgs::kJsonMsgFileCreated) << jsonFilePath;
 }
 
 QList<GpsDeviceEntry> JsonFileCreator::loadDatabase() {
@@ -110,13 +120,13 @@ QList<GpsDeviceEntry> JsonFileCreator::loadDatabase() {
 
     QFile file(jsonFilePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Не удалось открыть JSON:" << jsonFilePath;
+        qWarning() << QString(msgs::kJsonMsgFailedToOpen) << jsonFilePath;
         return gpsDatabase;
     }
 
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     if (!doc.isArray()) {
-        qWarning() << "Неверный формат JSON";
+        qWarning() << QString(msgs::kJsonMsgInvalidFormat);
         return gpsDatabase;
     }
 
@@ -140,6 +150,6 @@ QList<GpsDeviceEntry> JsonFileCreator::loadDatabase() {
         gpsDatabase.append(entry);
     }
 
-    qDebug() << "Загружено устройств:" << gpsDatabase.size();
+    qDebug() << QString(msgs::kJsonMsgDevicesLoaded) << gpsDatabase.size();
     return gpsDatabase;
 }

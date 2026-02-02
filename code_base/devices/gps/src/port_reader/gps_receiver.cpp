@@ -11,8 +11,15 @@ constexpr int TRY_TO_RECONNECT_INTERVAL_MS = 5000;
 
 namespace msgs {
 
+const char kGpsMsgAutoPortSelected[] = "Port selected automatically";
+const char kGpsMsgFailedToOpenPort[] = "Failed to open port";
+const char kGpsMsgIsConnected[] = "GPS connected to";
 const char kGpsMsgIsNotAvailabel[] = "GPS device is not available";
 const char kGpsMsgIsWaitingForDevice[] = "Waiting for GPS device...";
+const char kGpsMsgNoDataOrPortClosed[] =
+    "No data or port closed, trying to reconnect...";
+const char kGpsMsgIsReconnected[] = "Reconnected to";
+const char kGpsMsgLoopFinished[] = "Read loop finished";
 
 }  // end namespace msgs
 
@@ -42,7 +49,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
         auto gpsPorts = detector.getGpsPorts();
         if (!gpsPorts.isEmpty()) {
             targetPort = gpsPorts.first().portName();
-            qDebug() << "Автоматически выбран порт:" << targetPort;
+            qDebug() << QString(msgs::kGpsMsgAutoPortSelected) << targetPort;
         } else {
             qWarning() << QString(msgs::kGpsMsgIsNotAvailabel);
             return;
@@ -52,9 +59,9 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
     gps.setPortName(targetPort);
 
     if (!gps.open(QIODevice::ReadOnly)) {
-        qWarning() << "Не удалось открыть порт:" << gps.errorString();
+        qWarning() << QString(msgs::kGpsMsgFailedToOpenPort);
     } else {
-        qDebug() << "GPS подключен к" << targetPort;
+        qDebug() << QString(msgs::kGpsMsgIsConnected) << targetPort;
     }
 
     while (running.load(std::memory_order_relaxed)) {
@@ -64,7 +71,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
                 emit getDataReceived(chunk);
             }
         } else {
-            qDebug() << "Нет данных или порт закрыт, пробуем реконнект...";
+            qDebug() << QString(msgs::kGpsMsgNoDataOrPortClosed);
             gps.close();
 
             bool reconnected = false;
@@ -74,7 +81,8 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
                     if (portInfo.portName() == targetPort) {
                         gps.setPortName(portInfo.portName());
                         if (gps.open(QIODevice::ReadOnly)) {
-                            qDebug() << "Реконнект к" << portInfo.portName();
+                            qDebug() << QString(msgs::kGpsMsgIsReconnected)
+                                     << portInfo.portName();
                             reconnected = true;
                             break;
                         }
@@ -89,5 +97,5 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
     }
 
     gps.close();
-    qDebug() << "Цикл завершён";
+    qDebug() << QString(msgs::kGpsMsgLoopFinished);
 }

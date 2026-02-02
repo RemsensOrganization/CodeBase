@@ -28,6 +28,8 @@ constexpr int kMaxNumberSatellites = 32;
 
 constexpr double kMileToKmConversion = 1.852;
 
+const char kGpsMsgIsDatavalid[] = "Invalid data";
+
 namespace {
 bool isLatitudeValid(const double latitude) {
     return (latitude >= kMinLatitudeValue && latitude <= kMaxLatitudeValue);
@@ -81,7 +83,7 @@ void GPSParser::parseGpgga(const QString &line, bool &isValid) {
     data.valid_gps_flag = (parts[kGgaValidGpsFlagPartIndex] != "0");
     data.satellites = parts[kGgaSatellitesPartIndex].toInt();
     if (!isSatellitesNumberValid(data.satellites)) {
-        qWarning() << "Невалидные данные";
+        qWarning() << QString(kGpsMsgIsDatavalid);
         return;
     }
 
@@ -96,19 +98,19 @@ void GPSParser::parseGprmc(const QString &line, bool &isValid) {
         data.latitude = convertCoord(parts[kRmcLatitudeFieldPartIndex],
                                      parts[kRmcLatitudeFieldPartDirection]);
         if (!isLatitudeValid(data.latitude)) {
-            qWarning() << "Невалидные данные";
+            qWarning() << QString(kGpsMsgIsDatavalid);
             return;
         }
         data.longitude = convertCoord(parts[kRmcLongitudeFieldPartIndex],
                                       parts[kRmcLongitudeFieldPartDirection]);
         if (!isLongitudeValid(data.longitude)) {
-            qWarning() << "Невалидные данные";
+            qWarning() << QString(kGpsMsgIsDatavalid);
             return;
         }
         data.speedKmh =
             parts[kRmcSpeedPartIndex].toDouble() * kMileToKmConversion;
         if (!isSpeedValueValid(data.speedKmh)) {
-            qWarning() << "Невалидные данные";
+            qWarning() << QString(kGpsMsgIsDatavalid);
             return;
         }
         data.course = parts[kRmcCoursePartIndex].toDouble();

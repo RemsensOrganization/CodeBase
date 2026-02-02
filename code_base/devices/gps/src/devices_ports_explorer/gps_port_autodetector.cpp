@@ -2,6 +2,15 @@
 
 #include <QDebug>
 
+namespace msgs {
+
+const char kGpsMsgIsDevicesLoaded[] = "GPS devices loaded:";
+const char kGpsMsgIsFound[] = "GPS found:";
+const char kGpsMsgIsGpsPort[] = "This is a GPS port!";
+const char kGpsMsgIsNotGpsPort[] = "Not a GPS port.";
+
+}  // end namespace msgs
+
 GpsPortAutoDetector::GpsPortAutoDetector(QObject* parent) : QObject(parent) {
     JsonFileCreator db("gps_database.json");
     db.createDefaultDatabase();
@@ -22,7 +31,8 @@ bool GpsPortAutoDetector::isCOMPortGPS(const QSerialPortInfo& portInfo) const {
 
     for (const GpsDeviceEntry& entry : gpsDatabase) {
         if (entry.vid == vid && entry.pid == pid) {
-            qDebug() << "GPS найден:" << entry.vendor << entry.comment;
+            qDebug() << QString(msgs::kGpsMsgIsFound) << entry.vendor
+                     << entry.comment;
             return true;
         }
     }
@@ -31,7 +41,7 @@ bool GpsPortAutoDetector::isCOMPortGPS(const QSerialPortInfo& portInfo) const {
 
 // функция определения портов и проверки GPS
 void GpsPortAutoDetector::FindPorts() {
-    qDebug() << "Загружено устройств:" << gpsDatabase.size();
+    qDebug() << QString(msgs::kGpsMsgIsDevicesLoaded) << gpsDatabase.size();
     detectedPorts = QSerialPortInfo::availablePorts();
     gpsPorts.clear();
 
@@ -53,9 +63,9 @@ void GpsPortAutoDetector::FindPorts() {
         if (isCOMPortGPS(portInfo)) {
             gpsPorts.append(portInfo);
             gpsPortName = portInfo.portName();
-            qDebug() << "Это GPS-порт!";
+            qDebug() << QString(msgs::kGpsMsgIsGpsPort);
         } else {
-            qDebug() << "Не GPS.";
+            qDebug() << QString(msgs::kGpsMsgIsNotGpsPort);
         }
     }
 }

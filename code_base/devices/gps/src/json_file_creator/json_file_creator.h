@@ -5,6 +5,16 @@
 #include <QString>
 #include <QStringList>
 
+namespace msgs {
+
+extern const char kJsonMsgFailedToCreateJson[];
+extern const char kJsonMsgFileCreated[];
+extern const char kJsonMsgFailedToOpen[];
+extern const char kJsonMsgInvalidFormat[];
+extern const char kJsonMsgDevicesLoaded[];
+
+}  // namespace msgs
+
 struct GpsDeviceEntry {
     QString vendor;
     QString vid;
@@ -14,13 +24,13 @@ struct GpsDeviceEntry {
 };
 
 class JsonFileCreator {
-   public:
+public:
     explicit JsonFileCreator(const QString& filePath = "gps_database.json");
 
     void createDefaultDatabase();
     QList<GpsDeviceEntry> loadDatabase();
 
-   private:
+private:
     QString jsonFilePath;
 };
 

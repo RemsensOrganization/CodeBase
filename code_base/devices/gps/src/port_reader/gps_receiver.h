@@ -8,8 +8,13 @@
 
 namespace msgs {
 
+extern const char kGpsAutoPortSelected[];
+extern const char kGpsMsgFailedToOpenPort[];
 extern const char kGpsMsgIsNotAvailabel[];
 extern const char kGpsMsgIsWaitingForDevice[];
+extern const char kGpsMsgNoDataOrPortClosed[];
+extern const char kGpsMsgIsReconnected[];
+extern const char kGpsMsgLoopFinished[];
 
 }  // end namespace msgs
 

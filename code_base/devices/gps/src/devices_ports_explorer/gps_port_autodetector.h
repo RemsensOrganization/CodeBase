@@ -6,6 +6,15 @@
 #include <QObject>
 #include <QSerialPortInfo>
 
+namespace msgs {
+
+extern const char kGpsMsgIsDevicesLoaded[];
+extern const char kGpsMsgIsFound[];
+extern const char kGpsMsgIsGpsPort[];
+extern const char kGpsMsgIsNotGpsPort[];
+
+}  // end namespace msgs
+
 class GpsPortAutoDetector : public QObject {
     Q_OBJECT
 public:
