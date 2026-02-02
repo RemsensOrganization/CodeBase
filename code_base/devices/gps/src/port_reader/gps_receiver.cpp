@@ -77,7 +77,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
             bool reconnected = false;
             while (running.load(std::memory_order_relaxed) && !reconnected) {
                 auto detectedPorts = QSerialPortInfo::availablePorts();
-                for (const QSerialPortInfo &portInfo : detectedPorts) {
+                for (const QSerialPortInfo &portInfo : qAsConst(detectedPorts)) {
                     if (portInfo.portName() == targetPort) {
                         gps.setPortName(portInfo.portName());
                         if (gps.open(QIODevice::ReadOnly)) {
