@@ -1,4 +1,4 @@
-QT += serialport
+QT += core serialport
 
 DATA_DIR = $$PWD
 

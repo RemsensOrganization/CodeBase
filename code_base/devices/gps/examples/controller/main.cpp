@@ -1,8 +1,8 @@
 #include <QApplication>
 
 #include "controller.h"
-
-extern void saveGpsDataToFile(const GpsData &data, const QString &filePath);
+#include "file_data_writer.cpp"
+#include "gps_data.h"
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<GpsData>("GpsData");
