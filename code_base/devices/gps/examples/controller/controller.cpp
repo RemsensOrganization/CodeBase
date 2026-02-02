@@ -40,6 +40,12 @@ void gps_controller::start(const QString &portName, const int baudRate) {
     receiver->startInThread(portName, baudRate);
 }
 
+void gps_controller::start() { start("", QSerialPort::BaudRate::Baud9600); }
+
+void gps_controller::start(const QString &portName) {
+    start(portName, QSerialPort::BaudRate::Baud9600);
+}
+
 void gps_controller::stop() { receiver->stopInThread(); }
 
 void gps_controller::handleParsedData(const GpsData &data) {

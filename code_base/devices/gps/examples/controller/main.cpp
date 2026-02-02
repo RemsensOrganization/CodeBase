@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
         &controller, &gps_controller::gpsUpdated,
         [&](const GpsData &data) { logger::saveGpsDataToLogFile(data); });
 
-    controller.start("COM2", 9600);
+    controller.start("COM2");
 
     return app.exec();
 }

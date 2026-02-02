@@ -2,6 +2,7 @@
 #define DEVICES_GPS_EXAMPLES_CONTROLLER_CONTROLLER_H_
 
 #include <QObject>
+#include <QSerialPort>
 #include <QThread>
 
 #include "gps_data.h"
@@ -12,7 +13,10 @@ public:
     explicit gps_controller(QObject *parent = nullptr);
     ~gps_controller();
 
-    void start(const QString &portName, const int baudRate = 9600);
+    void start(const QString &portName, const int baudRate);
+    void start(const QString &portName);
+    void start();
+
     void stop();
 
 signals:
