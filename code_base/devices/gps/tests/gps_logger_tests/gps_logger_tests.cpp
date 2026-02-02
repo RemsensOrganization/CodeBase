@@ -10,7 +10,10 @@ void gps_logger_UnitTests ::gps_logger_save_to_file_Test() {
     data.latitude = 53.4;
     data.longitude = 27.6;
     data.valid_gps_flag = true;
-    logger::saveGpsDataToLogFile(data);
+    for (int i = 0; i < 5; ++i) {
+        qDebug() << data.toString();
+        logger::saveGpsDataToLogFile(data);
+    }
 }
 
 QTEST_MAIN(gps_logger_UnitTests)

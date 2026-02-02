@@ -1,5 +1,6 @@
 #include "controller.h"
 
+#include <QCloseEvent>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
@@ -8,46 +9,58 @@
 #include "gps_port_autodetector.h"
 #include "gps_receiver.h"
 
-gps_controller::gps_controller(QObject *parent) : QObject(parent) {
-    detector = new GpsPortAutoDetector(this);
-    receiver = new GPSReceiver();
-    parser = new GPSParser();
-
-    receiver->moveToThread(&receiverThread);
-    parser->moveToThread(&receiverThread);
-
-    connect(&receiverThread, &QThread::finished, receiver,
-            &QObject::deleteLater);
-
-    connect(&receiverThread, &QThread::finished, parser, &QObject::deleteLater);
-
-    connect(receiver, &GPSReceiver::getDataReceived, parser,
-            &GPSParser::parseLine);
-
-    connect(parser, &GPSParser::gpsUpdated, this,
-            &gps_controller::handleParsedData);
-
-    receiverThread.start();
+GpsController::GpsController(QObject *parent) : QObject(parent) {
+    receiver = nullptr;
+    detector = nullptr;
+    parser = nullptr;
 }
 
-gps_controller::~gps_controller() {
-    receiver->stopInThread();
-    receiverThread.quit();
-    receiverThread.wait();
+GpsController::~GpsController() {
+    qDebug() << "gps controller destructor...";
+    releaseResources();
 }
 
-void gps_controller::start(const QString &portName, const int baudRate) {
+void GpsController::start(const QString &portName, const int baudRate) {
     receiver->startInThread(portName, baudRate);
 }
 
-void gps_controller::start() { start("", QSerialPort::BaudRate::Baud9600); }
+void GpsController::start() { start("", QSerialPort::BaudRate::Baud9600); }
 
-void gps_controller::start(const QString &portName) {
+void GpsController::start(const QString &portName) {
     start(portName, QSerialPort::BaudRate::Baud9600);
 }
 
-void gps_controller::stop() { receiver->stopInThread(); }
+void GpsController::startCOM(const int portNumber) {
+    const QString portName = QString("COM%1").arg(portNumber);
+    start(portName);
+}
 
-void gps_controller::handleParsedData(const GpsData &data) {
+void GpsController::stop() {
+    receiver->stopInThread();
+    qDebug() << "stop function";
+}
+
+void GpsController::handleParsedData(const GpsData &data) {
     emit gpsUpdated(data);
+}
+
+void GpsController::handleCloseEvent() { releaseResources(); }
+
+void GpsController::releaseResources() {
+    receiver->stopInThread();
+    if (receiver) delete receiver;
+    if (detector) delete detector;
+    if (parser) delete parser;
+}
+
+void GpsController::initObjects() {
+    detector = new GpsPortAutoDetector(this);
+    receiver = new GPSReceiver();
+    parser = new GPSParser();
+    connect(receiver, &GPSReceiver::getDataReceived, parser,
+            &GPSParser::parseLine);
+    connect(parser, &GPSParser::gpsUpdated, this,
+            &GpsController::handleParsedData);
+    qDebug() << "receiverThread thread ID:" << QThread::currentThreadId();
+    emit controller_started();
 }
