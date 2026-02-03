@@ -43,19 +43,13 @@ void GpsController::startCOM(const int portNumber) {
     start(portName);
 }
 
-void GpsController::stop() {
-    receiver->stopInThread();
-    qDebug() << "stop function";
-}
+void GpsController::stop() { receiver->stopInThread(); }
 
 void GpsController::handleParsedData(const GpsData &data) {
     emit gpsUpdated(data);
 }
 
-void GpsController::handleCloseEvent() { releaseResources(); }
-
 void GpsController::releaseResources() {
-    qDebug() << "release GpsController resources";
     receiver->stopInThread();
     if (receiver) delete receiver;
     if (detector) delete detector;
