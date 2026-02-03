@@ -71,7 +71,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
                 emit getDataReceived(chunk);
             }
         } else {
-            qDebug() << QString(msgs::kGpsMsgNoDataOrPortClosed);
+            emit sendStatus(QString(msgs::kGpsMsgNoDataOrPortClosed));
             gps.close();
 
             bool reconnected = false;
@@ -90,7 +90,7 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
                     }
                 }
                 if (!reconnected) {
-                    qDebug() << QString(msgs::kGpsMsgIsWaitingForDevice);
+                    emit sendStatus(QString(msgs::kGpsMsgIsWaitingForDevice));
                     Sleep(TRY_TO_RECONNECT_INTERVAL_MS);
                 }
             }

@@ -12,20 +12,21 @@
 #include "gps_data.h"
 
 class GpsWidget : public QWidget {
+    static constexpr char kGpsStatus[] = "Gps status: %1";
+
 public:
     GpsWidget(QWidget *parent = nullptr) : QWidget(parent) {
         status = new QStatusBar(this);
         QVBoxLayout *layout = new QVBoxLayout(this);
         layout->addWidget(status);
         setLayout(layout);
-        showGpsStatus("Gps status: ");
     }
 
 public slots:
     void showGpsData(GpsData) { qDebug() << "update gps data in Gui thread"; };
     void showGpsStatus(const QString &msg) {
         if (status) {
-            status->showMessage(msg);
+            status->showMessage(QString(kGpsStatus).arg(msg));
         }
     };
 

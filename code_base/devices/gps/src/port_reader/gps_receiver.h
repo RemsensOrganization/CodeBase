@@ -27,6 +27,7 @@ public:
 
 signals:
     void getDataReceived(const QByteArray &data);
+    void sendStatus(const QString &status);
 
 private:
     void readLoop(const QString &portName, int baudRate);

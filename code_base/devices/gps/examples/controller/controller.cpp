@@ -62,6 +62,8 @@ void GpsController::initObjects() {
     parser = new GPSParser();
     connect(receiver, &GPSReceiver::getDataReceived, parser,
             &GPSParser::parseLine);
+    connect(receiver, &GPSReceiver::sendStatus, this,
+            &GpsController::gpsStatus);
     connect(parser, &GPSParser::gpsUpdated, this,
             &GpsController::handleParsedData);
     QObject::connect(
