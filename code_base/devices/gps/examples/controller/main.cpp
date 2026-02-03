@@ -13,8 +13,8 @@
 
 class GpsWidget : public QWidget {
 public:
-    GpsWidget(QObject *parent = nullptr) {
-        status = new QStatusBar;
+    GpsWidget(QWidget *parent = nullptr) : QWidget(parent) {
+        status = new QStatusBar(this);
         QVBoxLayout *layout = new QVBoxLayout(this);
         layout->addWidget(status);
         setLayout(layout);
@@ -49,6 +49,14 @@ int main(int argc, char *argv[]) {
                      &GpsWidget::showGpsData);
     QObject::connect(controller, &GpsController::gpsStatus, gps_widget,
                      &GpsWidget::showGpsStatus);
+
+    QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
+        controller->stop();
+        controller_thread->quit();
+        controller_thread->wait();
+        controller->deleteLater();
+    });
+
     gps_widget->show();
 
     controller_thread->start();

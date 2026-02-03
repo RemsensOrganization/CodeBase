@@ -19,6 +19,7 @@ public:
     void start();
     void startCOM(const int portNumber);
     void stop();
+    void releaseResources();
 
 signals:
     void gpsStatus(const QString &status);
@@ -34,8 +35,6 @@ private:
     class GPSParser *parser;
     class GpsPortAutoDetector *detector;
     QThread *controller_thread;
-
-    void releaseResources();
 };
 
 #endif  // DEVICES_GPS_EXAMPLES_CONTROLLER_CONTROLLER_H_
