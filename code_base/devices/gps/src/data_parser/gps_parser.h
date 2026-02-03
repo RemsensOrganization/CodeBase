@@ -10,8 +10,6 @@ class GPSParser : public QObject {
     friend class TestsParser;
 
 public:
-    explicit GPSParser(QObject *parent = nullptr);
-
     void parseLine(const QString &line);
 
 signals:

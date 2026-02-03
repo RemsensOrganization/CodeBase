@@ -41,17 +41,23 @@ constexpr char kGpsMsgNumberOfSattelitesIsOutOfRange[] =
     "Number of satellites is out of range";
 constexpr char kGpsMsgWrongRmcNumberOfParts[] = "Rmc number of parts is wrong";
 constexpr char kGpsMsgWrongGgaNumberOfParts[] = "Gga number of parts is wrong";
+constexpr char kGpsMsgNoDirectionSymbolError[] = "Missing direction indicator";
+constexpr char kGpsMsgConvertToDegreesError[] = "Failed to convert to degrees";
 
 namespace {
 
 double toDegrees(const QString &coord, const QString &dir) {
     if (coord.isEmpty() ||
-        (dir != "N" && dir != "S" && dir != "E" && dir != "W"))
+        (dir != "N" && dir != "S" && dir != "E" && dir != "W")) {
+        qWarning() << QString(kGpsMsgNoDirectionSymbolError);
         return 0.0;
+    }
 
     int degLen = (dir == "N" || dir == "S") ? 2 : 3;
-    int deg = coord.left(degLen).toInt();
-    double min = coord.mid(degLen).toDouble();
+    bool isOk;
+    int deg = coord.leftRef(degLen).toInt(&isOk);
+    double min = coord.midRef(degLen).toDouble(&isOk);
+    if (!isOk) qWarning() << QString(kGpsMsgConvertToDegreesError);
     double decimal = deg + min / 60.0;
     if (dir == "S" || dir == "W") decimal *= -1;
     return decimal;
@@ -115,8 +121,6 @@ bool isRmcStatusValid(const QString &flag) {
 }
 
 }  // end namespace
-
-GPSParser::GPSParser(QObject *parent) : QObject(parent) {}
 
 void GPSParser::parseLine(const QString &line) {
     static bool isGGA_Ready = false;
