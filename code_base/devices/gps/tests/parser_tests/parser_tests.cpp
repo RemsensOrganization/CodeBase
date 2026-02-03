@@ -17,6 +17,13 @@ const char RMC_BROKEN[] = "$GPRMC,123519,A,4807.038,N*6C\r\n";
 
 }  // namespace mock
 
+void QCOMPARE_FLOATS(double actual, double expected, double epsilon = 0.01) {
+    QVERIFY2(qAbs(actual - expected) < epsilon,
+             qPrintable(
+                 QString("Expected %1 but got %2").arg(expected).arg(actual)));
+
+}  // namespace
+
 TestsParser::TestsParser() {}
 
 void TestsParser::test_gga_rmc_pair() {
@@ -29,10 +36,12 @@ void TestsParser::test_gga_rmc_pair() {
     QVERIFY(parser.data.valid_gps_flag);
     QCOMPARE(parser.data.satellites, 8);
     QCOMPARE(parser.data.altitude, 545.4);
-    QVERIFY(parser.data.latitude > 53.0 && parser.data.latitude < 53.1);
-    QVERIFY(parser.data.longitude > 11.0 && parser.data.longitude < 11.6);
-    QVERIFY(parser.data.speedKmh > 18.0 && parser.data.speedKmh < 19.0);
-    QCOMPARE(parser.data.course, 90.0);
+    qDebug() << parser.data.latitude;
+    QCOMPARE_FLOATS(parser.data.latitude, 53.00);
+    QCOMPARE_FLOATS(parser.data.longitude, 11.52);
+    qDebug() << parser.data.speedKmh;
+    QCOMPARE_FLOATS(parser.data.speedKmh, 18.52);
+    QCOMPARE_FLOATS(parser.data.course, 90.0);
     QCOMPARE(parser.data.timeUtc, QStringLiteral("123519"));
     QCOMPARE(parser.data.date, QStringLiteral("010203"));
 }

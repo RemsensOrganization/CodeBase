@@ -18,9 +18,8 @@ signals:
     void gpsUpdated(const GpsData &data);
 
 private:
-    double convertCoord(const QString &coord, const QString &dir);
-    void parseGpgga(const QString &line, bool &isValid);
-    void parseGprmc(const QString &line, bool &isValid);
+    void parseGGA(const QString &line, bool &isValid);
+    void parseRMC(const QString &line, bool &isValid);
 
     GpsData data;
 };

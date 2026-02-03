@@ -22,46 +22,29 @@ constexpr int kRmcSpeedPartIndex = 7;
 constexpr int kRmcCoursePartIndex = 8;
 constexpr int kRmcDatePartIndex = 9;
 
-constexpr int kMaxRmcNumberOfParts = 13;
-constexpr int kMaxGgaNumberOfParts = 14;
+constexpr int kRmcNumberOfParts = 13;
+constexpr int kGgaNumberOfParts = 14;
 constexpr int kMaxNumberSatellites = 32;
 
 constexpr double kMileToKmConversion = 1.852;
+constexpr double kVelocityMaxLimit = 1850;   // km per hour
+constexpr double kAltitudeMaxLimit = 18000;  // meters
+constexpr double kAltitudeMinLimit = -500;
 
-const char kGpsMsgIsDatavalid[] = "Invalid data";
+constexpr char kGpsMsgGpsFlagIsInvalid[] = "GPS flag is invalid";
+constexpr char kGpsMsgRmcFlagIsInvalid[] = "RMC flag is invalid";
+constexpr char kGpsMsgLatitudeIsOutOfRange[] = "Latitude is out of range";
+constexpr char kGpsMsgLongitudeIsOutOfRange[] = "Longitude is out of range";
+constexpr char kGpsMsgAltitudeIsOutOfRange[] = "Altitude is out of range";
+constexpr char kGpsMsgVelocityIsOutOfRange[] = "Velocity is out of range";
+constexpr char kGpsMsgNumberOfSattelitesIsOutOfRange[] =
+    "Number of satellites is out of range";
+constexpr char kGpsMsgWrongRmcNumberOfParts[] = "Rmc number of parts is wrong";
+constexpr char kGpsMsgWrongGgaNumberOfParts[] = "Gga number of parts is wrong";
 
 namespace {
-bool isLatitudeValid(const double latitude) {
-    return (latitude >= kMinLatitudeValue && latitude <= kMaxLatitudeValue);
-};
-bool isLongitudeValid(const double longitude) {
-    return (longitude >= kMinLongitudeValue && longitude <= kMaxLongitudeValue);
-};
-bool isSatellitesNumberValid(const int satellites) {
-    return (satellites >= 0 && satellites <= kMaxNumberSatellites);
-};
-bool isSpeedValueValid(const double speedKmh) { return (speedKmh >= 0.0); }
-}  // end namespace
 
-GPSParser::GPSParser(QObject *parent) : QObject(parent) {}
-
-void GPSParser::parseLine(const QString &line) {
-    static bool isGGA_Ready = false;
-    static bool isRMC_Ready = false;
-
-    if (line.startsWith("$GPGGA")) {
-        parseGpgga(line, isGGA_Ready);
-    } else if (line.startsWith("$GPRMC")) {
-        parseGprmc(line, isRMC_Ready);
-    }
-    if (isGGA_Ready && isRMC_Ready) {
-        emit gpsUpdated(data);
-        isGGA_Ready = false;
-        isRMC_Ready = false;
-    }
-}
-
-double GPSParser::convertCoord(const QString &coord, const QString &dir) {
+double toDegrees(const QString &coord, const QString &dir) {
     if (coord.isEmpty() ||
         (dir != "N" && dir != "S" && dir != "E" && dir != "W"))
         return 0.0;
@@ -74,47 +57,122 @@ double GPSParser::convertCoord(const QString &coord, const QString &dir) {
     return decimal;
 }
 
-void GPSParser::parseGpgga(const QString &line, bool &isValid) {
-    QStringList parts = line.split(",");
-    if (parts.size() < kMaxGgaNumberOfParts) return;
+bool isLatitudeValid(const double latitude) {
+    bool result =
+        (latitude >= kMinLatitudeValue && latitude <= kMaxLatitudeValue);
+    if (!result) qWarning() << kGpsMsgLatitudeIsOutOfRange;
+    return result;
+};
 
-    data.altitude = parts[kGgaAltitudeFieldPartIndex].toDouble();
-    data.timeUtc = parts[kGgaTimeUtcPartIndex];
-    data.valid_gps_flag = (parts[kGgaValidGpsFlagPartIndex] != "0");
-    data.satellites = parts[kGgaSatellitesPartIndex].toInt();
-    if (!isSatellitesNumberValid(data.satellites)) {
-        qWarning() << QString(kGpsMsgIsDatavalid);
+bool isLongitudeValid(const double longitude) {
+    bool result =
+        (longitude >= kMinLongitudeValue && longitude <= kMaxLongitudeValue);
+    if (!result) qWarning() << kGpsMsgLongitudeIsOutOfRange;
+    return result;
+};
+
+bool isSatellitesNumberValid(const int satellites) {
+    bool result = (satellites >= 0 && satellites <= kMaxNumberSatellites);
+    if (!result) qWarning() << kGpsMsgNumberOfSattelitesIsOutOfRange;
+    return result;
+};
+
+bool isSpeedValueValid(const double speedKmh) {
+    bool result = (speedKmh >= 0.0 && speedKmh < kVelocityMaxLimit);
+    if (!result) qWarning() << kGpsMsgVelocityIsOutOfRange;
+    return result;
+}
+
+bool isAltitudeRangeValid(const double altitude) {
+    bool result =
+        (altitude > kAltitudeMinLimit && altitude < kAltitudeMaxLimit);
+    if (!result) qWarning() << kGpsMsgAltitudeIsOutOfRange;
+    return result;
+}
+
+bool isGgaNumberValid(const int number) {
+    bool result = (number == kGgaNumberOfParts);
+    if (!result) qWarning() << kGpsMsgWrongGgaNumberOfParts << number;
+    return result;
+}
+
+bool isRmcNumberValid(const int number) {
+    bool result = (number == kRmcNumberOfParts);
+    if (!result) qWarning() << kGpsMsgWrongRmcNumberOfParts << number;
+    return result;
+}
+
+bool isGpsFlagValid(const QString &flag) {
+    bool result = flag != "0";
+    if (!result) qWarning() << kGpsMsgGpsFlagIsInvalid;
+    return result;
+};
+
+bool isRmcStatusValid(const QString &flag) {
+    bool result = (flag == "A");
+    if (!result) qWarning() << kGpsMsgRmcFlagIsInvalid;
+    return result;
+}
+
+}  // end namespace
+
+GPSParser::GPSParser(QObject *parent) : QObject(parent) {}
+
+void GPSParser::parseLine(const QString &line) {
+    static bool isGGA_Ready = false;
+    static bool isRMC_Ready = false;
+
+    if (line.startsWith("$GPGGA")) {
+        parseGGA(line, isGGA_Ready);
+    } else if (line.startsWith("$GPRMC")) {
+        parseRMC(line, isRMC_Ready);
+    }
+    if (isGGA_Ready && isRMC_Ready) {
+        emit gpsUpdated(data);
+        isGGA_Ready = false;
+        isRMC_Ready = false;
+    }
+}
+
+void GPSParser::parseGGA(const QString &line, bool &isValid) {
+    QStringList parts = line.split(",");
+    if (!isGgaNumberValid(parts.size())) {
+        isValid = false;
         return;
     }
 
-    isValid = true;
+    data.altitude = parts[kGgaAltitudeFieldPartIndex].toDouble();
+    isAltitudeRangeValid(data.altitude);
+
+    data.timeUtc = parts[kGgaTimeUtcPartIndex];
+
+    data.satellites = parts[kGgaSatellitesPartIndex].toInt();
+    isSatellitesNumberValid(data.satellites);
+
+    data.valid_gps_flag = isGpsFlagValid(parts[kGgaValidGpsFlagPartIndex]);
+    isValid = data.valid_gps_flag;
 }
 
-void GPSParser::parseGprmc(const QString &line, bool &isValid) {
+void GPSParser::parseRMC(const QString &line, bool &isValid) {
     QStringList parts = line.split(",");
-    if (parts.size() < kMaxRmcNumberOfParts) return;
-
-    if (parts[kRmcStatusPartIndex] == "A") {
-        data.latitude = convertCoord(parts[kRmcLatitudeFieldPartIndex],
-                                     parts[kRmcLatitudeFieldPartDirection]);
-        if (!isLatitudeValid(data.latitude)) {
-            qWarning() << QString(kGpsMsgIsDatavalid);
-            return;
-        }
-        data.longitude = convertCoord(parts[kRmcLongitudeFieldPartIndex],
-                                      parts[kRmcLongitudeFieldPartDirection]);
-        if (!isLongitudeValid(data.longitude)) {
-            qWarning() << QString(kGpsMsgIsDatavalid);
-            return;
-        }
-        data.speedKmh =
-            parts[kRmcSpeedPartIndex].toDouble() * kMileToKmConversion;
-        if (!isSpeedValueValid(data.speedKmh)) {
-            qWarning() << QString(kGpsMsgIsDatavalid);
-            return;
-        }
-        data.course = parts[kRmcCoursePartIndex].toDouble();
-        data.date = parts[kRmcDatePartIndex];
+    if (!isRmcNumberValid(parts.size())) {
+        isValid = false;
+        return;
     }
-    isValid = true;
+
+    data.latitude = toDegrees(parts[kRmcLatitudeFieldPartIndex],
+                              parts[kRmcLatitudeFieldPartDirection]);
+    isLatitudeValid(data.latitude);
+
+    data.longitude = toDegrees(parts[kRmcLongitudeFieldPartIndex],
+                               parts[kRmcLongitudeFieldPartDirection]);
+    isLongitudeValid(data.longitude);
+
+    data.speedKmh = parts[kRmcSpeedPartIndex].toDouble() * kMileToKmConversion;
+    isSpeedValueValid(data.speedKmh);
+
+    data.course = parts[kRmcCoursePartIndex].toDouble();
+    data.date = parts[kRmcDatePartIndex];
+
+    isValid = isRmcStatusValid(parts[kRmcStatusPartIndex]);
 }
