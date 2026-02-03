@@ -5,14 +5,21 @@
 #include <QDebug>
 #include <QThread>
 
+#include "gps_logger.h"
 #include "gps_parser.h"
 #include "gps_port_autodetector.h"
 #include "gps_receiver.h"
 
-GpsController::GpsController(QObject *parent) : QObject(parent) {
+GpsController::GpsController(QThread *thread, QObject *parent)
+    : QObject(parent), controller_thread(thread) {
+    this->moveToThread(controller_thread);
     receiver = nullptr;
     detector = nullptr;
     parser = nullptr;
+    QObject::connect(controller_thread, &QThread::started, this,
+                     &GpsController::initObjects);
+    QObject::connect(controller_thread, &QThread::finished, this,
+                     &GpsController::releaseResources);
 }
 
 GpsController::~GpsController() {
@@ -22,6 +29,7 @@ GpsController::~GpsController() {
 
 void GpsController::start(const QString &portName, const int baudRate) {
     receiver->startInThread(portName, baudRate);
+    emit gpsStatus("gps try to start: " + portName);
 }
 
 void GpsController::start() { start("", QSerialPort::BaudRate::Baud9600); }
@@ -62,6 +70,8 @@ void GpsController::initObjects() {
             &GPSParser::parseLine);
     connect(parser, &GPSParser::gpsUpdated, this,
             &GpsController::handleParsedData);
+    QObject::connect(
+        this, &GpsController::gpsUpdated,
+        [&](const GpsData &data) { logger::saveGpsDataToLogFile(data); });
     qDebug() << "receiverThread thread ID:" << QThread::currentThreadId();
-    emit controller_started();
 }

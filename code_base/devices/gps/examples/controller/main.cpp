@@ -1,54 +1,54 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QObject>
+#include <QStatusBar>
 #include <QTimer>
+#include <QVBoxLayout>
 #include <QWidget>
 
 #include "QDebug"
 #include "QThread"
 #include "controller.h"
 #include "gps_data.h"
-#include "gps_logger.h"
 
 class GpsWidget : public QWidget {
 public:
-    GpsWidget(GpsController *gpsController) { controller = gpsController; };
-
-protected:
-    void closeEvent(QCloseEvent *event) override {
-        qDebug() << "GpsWidget closing event";
-        event->ignore();
-        controller->releaseResources();
-        event->accept();
+    GpsWidget(QObject *parent = nullptr) {
+        status = new QStatusBar;
+        QVBoxLayout *layout = new QVBoxLayout(this);
+        layout->addWidget(status);
+        setLayout(layout);
+        showGpsStatus("Gps status: ");
     }
 
+public slots:
+    void showGpsData(GpsData) { qDebug() << "update gps data in Gui thread"; };
+    void showGpsStatus(const QString &msg) {
+        if (status) {
+            status->showMessage(msg);
+        }
+    };
+
 private:
-    GpsController *controller;
+    QStatusBar *status;
 };
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<GpsData>("GpsData");
 
     QApplication app(argc, argv);
-
-    QThread *mainThread = QApplication::instance()->thread();
-    qDebug() << "Main thread ID:" << mainThread->currentThreadId();
-
     QThread *controller_thread = new QThread;
-    GpsController *controller = new GpsController;
-    controller->moveToThread(controller_thread);
+    GpsController *controller = new GpsController(controller_thread);
 
-    GpsWidget *gps_widget = new GpsWidget(controller);
+    GpsWidget *gps_widget = new GpsWidget;
     gps_widget->setWindowTitle("GpsWidget");
 
-    QObject::connect(
-        controller, &GpsController::gpsUpdated,
-        [&](const GpsData &data) { logger::saveGpsDataToLogFile(data); });
     QObject::connect(controller_thread, &QThread::started, controller,
-                     &GpsController::initObjects);
-    QObject::connect(controller, &GpsController::controller_started,
                      [controller]() { controller->startCOM(2); });
-
+    QObject::connect(controller, &GpsController::gpsUpdated, gps_widget,
+                     &GpsWidget::showGpsData);
+    QObject::connect(controller, &GpsController::gpsStatus, gps_widget,
+                     &GpsWidget::showGpsStatus);
     gps_widget->show();
 
     controller_thread->start();
