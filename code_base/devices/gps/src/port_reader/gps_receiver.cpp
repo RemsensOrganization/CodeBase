@@ -13,7 +13,7 @@ namespace msgs {
 
 const char kGpsMsgAutoPortSelected[] = "Port selected automatically";
 const char kGpsMsgFailedToOpenPort[] = "Failed to open port";
-const char kGpsMsgIsConnected[] = "GPS connected to";
+const char kGpsMsgIsConnected[] = "GPS connected to %1";
 const char kGpsMsgIsNotAvailabel[] = "GPS device is not available";
 const char kGpsMsgIsWaitingForDevice[] = "Waiting for GPS device...";
 const char kGpsMsgNoDataOrPortClosed[] =
@@ -23,7 +23,8 @@ const char kGpsMsgLoopFinished[] = "Read loop finished";
 
 }  // end namespace msgs
 
-void GPSReceiver::startInThread(const QString &portName, int baudRate) {
+void GPSReceiver::startInThread(const QString &portName,
+                                QSerialPort::BaudRate baudRate) {
     if (running.load(std::memory_order_relaxed)) return;
     running.store(true, std::memory_order_relaxed);
     readLoop(portName, baudRate);
@@ -33,7 +34,7 @@ void GPSReceiver::stopInThread() {
     running.store(false, std::memory_order_relaxed);
 }
 
-void GPSReceiver::readLoop(const QString &portName, int baudRate) {
+void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
     QSerialPort gps;
     gps.setBaudRate(baudRate);
     gps.setDataBits(QSerialPort::Data8);
@@ -49,19 +50,20 @@ void GPSReceiver::readLoop(const QString &portName, int baudRate) {
         auto gpsPorts = detector.getGpsPorts();
         if (!gpsPorts.isEmpty()) {
             targetPort = gpsPorts.first().portName();
-            qDebug() << QString(msgs::kGpsMsgAutoPortSelected) << targetPort;
+            emit sendStatus(QString(msgs::kGpsMsgAutoPortSelected) +
+                            targetPort);
         } else {
-            qWarning() << QString(msgs::kGpsMsgIsNotAvailabel);
+            emit sendStatus(QString(msgs::kGpsMsgIsNotAvailabel));
             return;
         }
     }
-    qDebug() << "Target port: " << targetPort;
+    emit sendStatus("Target port: " + targetPort);
     gps.setPortName(targetPort);
 
     if (!gps.open(QIODevice::ReadOnly)) {
         qWarning() << QString(msgs::kGpsMsgFailedToOpenPort);
     } else {
-        qDebug() << QString(msgs::kGpsMsgIsConnected) << targetPort;
+        emit sendStatus(QString(msgs::kGpsMsgIsConnected).arg(targetPort));
     }
 
     while (running.load(std::memory_order_relaxed)) {

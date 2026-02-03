@@ -27,9 +27,9 @@ GpsController::~GpsController() {
     releaseResources();
 }
 
-void GpsController::start(const QString &portName, const int baudRate) {
+void GpsController::start(const QString &portName,
+                          QSerialPort::BaudRate baudRate) {
     receiver->startInThread(portName, baudRate);
-    emit gpsStatus("gps try to start: " + portName);
 }
 
 void GpsController::start() { start("", QSerialPort::BaudRate::Baud9600); }
@@ -46,7 +46,7 @@ void GpsController::startCOM(const int portNumber) {
 void GpsController::stop() { receiver->stopInThread(); }
 
 void GpsController::handleParsedData(const GpsData &data) {
-    emit gpsUpdated(data);
+    emit updateGpsData(data);
 }
 
 void GpsController::releaseResources() {
@@ -63,11 +63,11 @@ void GpsController::initObjects() {
     connect(receiver, &GPSReceiver::getDataReceived, parser,
             &GPSParser::parseLine);
     connect(receiver, &GPSReceiver::sendStatus, this,
-            &GpsController::gpsStatus);
+            &GpsController::updateStatus);
     connect(parser, &GPSParser::gpsUpdated, this,
             &GpsController::handleParsedData);
     QObject::connect(
-        this, &GpsController::gpsUpdated,
+        this, &GpsController::updateGpsData,
         [&](const GpsData &data) { logger::saveGpsDataToLogFile(data); });
     qDebug() << "receiverThread thread ID:" << QThread::currentThreadId();
 }

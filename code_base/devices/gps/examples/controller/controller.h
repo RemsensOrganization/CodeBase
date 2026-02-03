@@ -8,21 +8,20 @@
 
 class GpsController : public QObject {
     Q_OBJECT
-    friend class GpsWidget;
 
 public:
     explicit GpsController(QThread *thread, QObject *parent = nullptr);
     ~GpsController();
 
-    void start(const QString &portName, const int baudRate);
+    void start(const QString &portName, QSerialPort::BaudRate baudRate);
     void start(const QString &portName);
     void start();
     void startCOM(const int portNumber);
     void stop();
 
 signals:
-    void gpsStatus(const QString &status);
-    void gpsUpdated(const GpsData &data);
+    void updateStatus(const QString &status);
+    void updateGpsData(const GpsData &data);
 
 private slots:
     void handleParsedData(const GpsData &data);

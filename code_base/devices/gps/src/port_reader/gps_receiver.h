@@ -22,7 +22,9 @@ class GPSReceiver : public QObject {
     Q_OBJECT
 
 public:
-    void startInThread(const QString &portName, int baudRate = 9600);
+    void startInThread(
+        const QString &portName,
+        QSerialPort::BaudRate baudRate = QSerialPort::BaudRate::Baud9600);
     void stopInThread();
 
 signals:
@@ -30,7 +32,7 @@ signals:
     void sendStatus(const QString &status);
 
 private:
-    void readLoop(const QString &portName, int baudRate);
+    void readLoop(const QString &portName, const int baudRate);
 
     std::atomic<bool> running{false};
 };
