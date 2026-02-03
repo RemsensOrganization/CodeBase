@@ -13,8 +13,6 @@
 #include "gps_data.h"
 
 class GpsWidget : public QWidget {
-    static constexpr char kGpsStatus[] = "Gps status: %1";
-
 public:
     GpsWidget(QWidget *parent = nullptr) : QWidget(parent) {
         status = new QPlainTextEdit(this);
@@ -37,7 +35,7 @@ public slots:
     };
     void showGpsStatus(const QString &msg) {
         if (status) {
-            status->appendPlainText(QString(kGpsStatus).arg(msg));
+            status->appendPlainText(msg);
         }
     };
 
