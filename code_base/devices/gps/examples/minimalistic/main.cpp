@@ -1,0 +1,40 @@
+#include <QApplication>
+#include <QDebug>
+#include <QObject>
+
+#include "gps_widget.h"
+#include "QtConcurrent/QtConcurrent"  // IWYU pragma: keep
+#include "gps_data.h"
+#include "gps_parser.h"
+#include "gps_receiver.h"
+#include "qobjectdefs.h"
+
+int main(int argc, char *argv[]) {
+    qRegisterMetaType<GpsData>("GpsData");
+    QApplication app(argc, argv);
+    GPSReceiver *gps_receiver = new GPSReceiver;
+    GPSParser *gps_parser = new GPSParser;
+    QtConcurrent::run(gps_receiver, &GPSReceiver::start, QString("COM1"),
+                      QSerialPort::Baud9600);
+    GpsWidget *gps_widget = new GpsWidget;
+
+    QObject::connect(gps_receiver, &GPSReceiver::sendStatus, gps_widget,
+                     &GpsWidget::showGpsStatus);
+    QObject::connect(gps_receiver, &GPSReceiver::getDataReceived, gps_parser,
+                     &GPSParser::parseLine);
+    QObject::connect(gps_parser, &GPSParser::gpsUpdated, gps_widget,
+                     &GpsWidget::showGpsData);
+
+    QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
+        gps_receiver->stop();
+        gps_receiver->deleteLater();
+        gps_parser->deleteLater();
+    });
+    gps_widget->show();
+    GpsData gps_data;
+    gps_data.valid_gps_flag = true;
+    gps_data.latitude = 53.3;
+    gps_data.longitude = 27.5;
+    emit gps_parser->gpsUpdated(gps_data);
+    return app.exec();
+}

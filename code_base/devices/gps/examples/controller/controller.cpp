@@ -29,7 +29,7 @@ GpsController::~GpsController() {
 
 void GpsController::start(const QString &portName,
                           QSerialPort::BaudRate baudRate) {
-    receiver->startInThread(portName, baudRate);
+    receiver->start(portName, baudRate);
 }
 
 void GpsController::start() { start("", QSerialPort::BaudRate::Baud9600); }
@@ -43,14 +43,14 @@ void GpsController::startCOM(const int portNumber) {
     start(portName);
 }
 
-void GpsController::stop() { receiver->stopInThread(); }
+void GpsController::stop() { receiver->stop(); }
 
 void GpsController::handleParsedData(const GpsData &data) {
     emit updateGpsData(data);
 }
 
 void GpsController::releaseResources() {
-    receiver->stopInThread();
+    receiver->stop();
     if (receiver) delete receiver;
     if (detector) delete detector;
     if (parser) delete parser;

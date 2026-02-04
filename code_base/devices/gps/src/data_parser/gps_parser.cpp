@@ -165,6 +165,7 @@ bool isDateValid(const QString &date) {
 }  // end namespace
 
 void GPSParser::parseLine(const QString &line) {
+    if (line.isEmpty()) return;
     static bool isGGA_Ready = false;
     static bool isRMC_Ready = false;
 

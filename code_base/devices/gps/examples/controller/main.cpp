@@ -1,47 +1,11 @@
 #include <QApplication>
-#include <QCloseEvent>
 #include <QObject>
-#include <QPlainTextEdit>
-#include <QStatusBar>
-#include <QTimer>
-#include <QVBoxLayout>
-#include <QWidget>
 
+#include "gps_widget.h"
 #include "QDebug"
 #include "QThread"
 #include "controller.h"
 #include "gps_data.h"
-
-class GpsWidget : public QWidget {
-public:
-    GpsWidget(QWidget *parent = nullptr) : QWidget(parent) {
-        status = new QPlainTextEdit(this);
-        status->setStyleSheet(
-            "QPlainTextEdit {"
-            " background-color: black;"
-            " color: lime;"
-            " font-family: 'Courier New';"
-            " font-size: 12pt;"
-            "}");
-
-        QVBoxLayout *layout = new QVBoxLayout(this);
-        layout->addWidget(status);
-        setLayout(layout);
-    }
-
-public slots:
-    void showGpsData(GpsData data) {
-        status->appendPlainText(data.toArseniyString());
-    };
-    void showGpsStatus(const QString &msg) {
-        if (status) {
-            status->appendPlainText(msg);
-        }
-    };
-
-private:
-    QPlainTextEdit *status;
-};
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<GpsData>("GpsData");

@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QSerialPort>
 
-#include "atomic"
-
 namespace msgs {
 
 extern const char kGpsAutoPortSelected[];
@@ -22,10 +20,10 @@ class GPSReceiver : public QObject {
     Q_OBJECT
 
 public:
-    void startInThread(
+    Q_INVOKABLE void start(
         const QString &portName,
         QSerialPort::BaudRate baudRate = QSerialPort::BaudRate::Baud9600);
-    void stopInThread();
+    void stop();
 
 signals:
     void getDataReceived(const QByteArray &data);
@@ -33,8 +31,7 @@ signals:
 
 private:
     void readLoop(const QString &portName, const int baudRate);
-
-    std::atomic<bool> running{false};
+    bool isRun = false;
 };
 
 #endif  // DEVICES_GPS_SRC_PORT_READER_GPS_RECEIVER_H_
