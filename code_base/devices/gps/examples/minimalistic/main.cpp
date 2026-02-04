@@ -2,11 +2,11 @@
 #include <QDebug>
 #include <QObject>
 
-#include "gps_widget.h"
 #include "QtConcurrent/QtConcurrent"  // IWYU pragma: keep
 #include "gps_data.h"
 #include "gps_parser.h"
 #include "gps_receiver.h"
+#include "gps_widget.h"
 #include "qobjectdefs.h"
 
 int main(int argc, char *argv[]) {
@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     GPSReceiver *gps_receiver = new GPSReceiver;
     GPSParser *gps_parser = new GPSParser;
-    QtConcurrent::run(gps_receiver, &GPSReceiver::start, QString("COM1"),
-                      QSerialPort::Baud9600);
+    auto future = QtConcurrent::run(gps_receiver, &GPSReceiver::start,
+                                    QString("COM1"), QSerialPort::Baud9600);
     GpsWidget *gps_widget = new GpsWidget;
 
     QObject::connect(gps_receiver, &GPSReceiver::sendStatus, gps_widget,
@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
 
     QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
         gps_receiver->stop();
+        future.waitForFinished();
         gps_receiver->deleteLater();
         gps_parser->deleteLater();
     });
