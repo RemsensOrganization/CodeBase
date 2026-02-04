@@ -22,6 +22,7 @@ public:
 private slots:
     void test_gga_rmc_pair();
     void test_broken_lines();
+    void test_unreal_values();
 };
 
 #endif  // DEVICES_GPS_TESTS_PARSER_TESTS_PARSER_TESTS_H_

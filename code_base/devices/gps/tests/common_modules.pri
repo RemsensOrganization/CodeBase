@@ -6,3 +6,5 @@ TEMPLATE = app
 
 include(../pathes.pri)
 include($$SRC_DIR/gps.pri)
+
+RESOURCES += $$PWD/test_res.qrc\

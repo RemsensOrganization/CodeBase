@@ -15,6 +15,12 @@ const char RMC_VALID[] =
 const char GGA_BROKEN[] = "$GPGGA,123519,4807.038,N*47\r\n";
 const char RMC_BROKEN[] = "$GPRMC,123519,A,4807.038,N*6C\r\n";
 
+const char RMC_UNREAL[] =
+    "$GPRMC,250000.000,V,9999.999,N,19999.999,E,9999.9,999.9,991299,,,A*7C\r\n";
+const char GGA_UNREAL[] =
+    "$GPGGA,250000.000,9999.999,N,19999.999,E,8,99,99.9,99999.9,M,9999.9,,*"
+    "4A\r\n";
+
 }  // namespace mock
 
 void QCOMPARE_FLOATS(double actual, double expected, double epsilon = 0.01) {
@@ -36,10 +42,8 @@ void TestsParser::test_gga_rmc_pair() {
     QVERIFY(parser.data.valid_gps_flag);
     QCOMPARE(parser.data.satellites, 8);
     QCOMPARE(parser.data.altitude, 545.4);
-    qDebug() << parser.data.latitude;
     QCOMPARE_FLOATS(parser.data.latitude, 53.00);
     QCOMPARE_FLOATS(parser.data.longitude, 11.52);
-    qDebug() << parser.data.speedKmh;
     QCOMPARE_FLOATS(parser.data.speedKmh, 18.52);
     QCOMPARE_FLOATS(parser.data.course, 90.0);
     QCOMPARE(parser.data.timeUtc, QStringLiteral("123519"));
@@ -61,6 +65,23 @@ void TestsParser::test_broken_lines() {
     QCOMPARE(parser.data.speedKmh, 0.0);
     QCOMPARE(parser.data.course, 0.0);
     QVERIFY(parser.data.date.isEmpty());
+}
+
+void TestsParser::test_unreal_values() {
+    QByteArray GGA_VALID(mock::GGA_UNREAL);
+    QByteArray RMC_VALID(mock::RMC_UNREAL);
+    GPSParser parser;
+    parser.parseLine(QString::fromLatin1(GGA_VALID));
+    parser.parseLine(QString::fromLatin1(RMC_VALID));
+    Q_UNUSED(parser.data.valid_gps_flag;)
+    Q_UNUSED(parser.data.satellites;)
+    Q_UNUSED(parser.data.altitude;)
+    Q_UNUSED(parser.data.latitude;)
+    Q_UNUSED(parser.data.longitude;)
+    Q_UNUSED(parser.data.speedKmh;)
+    Q_UNUSED(parser.data.course;)
+    Q_UNUSED(parser.data.timeUtc;)
+    Q_UNUSED(parser.data.date;)
 }
 
 QTEST_MAIN(TestsParser)

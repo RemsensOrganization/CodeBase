@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include "qdatetime.h"
+
 constexpr double kMinLongitudeValue = -180;
 constexpr double kMaxLongitudeValue = 180;
 
@@ -22,8 +24,8 @@ constexpr int kRmcSpeedPartIndex = 7;
 constexpr int kRmcCoursePartIndex = 8;
 constexpr int kRmcDatePartIndex = 9;
 
-constexpr int kRmcNumberOfParts = 13;
-constexpr int kGgaNumberOfParts = 14;
+constexpr int kRmcMinNumberOfParts = 13;
+constexpr int kGgaMinNumberOfParts = 14;
 constexpr int kMaxNumberSatellites = 32;
 
 constexpr double kMileToKmConversion = 1.852;
@@ -43,6 +45,8 @@ constexpr char kGpsMsgWrongRmcNumberOfParts[] = "Rmc number of parts is wrong";
 constexpr char kGpsMsgWrongGgaNumberOfParts[] = "Gga number of parts is wrong";
 constexpr char kGpsMsgNoDirectionSymbolError[] = "Missing direction indicator";
 constexpr char kGpsMsgConvertToDegreesError[] = "Failed to convert to degrees";
+constexpr char kGpsMsgCourseIsOutOfRange[] = "Course is out of range";
+constexpr char kGpsMsgDateIsInvalid[] = "Date is invalid";
 
 namespace {
 
@@ -97,14 +101,19 @@ bool isAltitudeRangeValid(const double altitude) {
 }
 
 bool isGgaNumberValid(const int number) {
-    bool result = (number == kGgaNumberOfParts);
-    if (!result) qWarning() << kGpsMsgWrongGgaNumberOfParts << number;
+    bool result = (number >= kGgaMinNumberOfParts);
+    if (!result)
+        qWarning() << kGpsMsgWrongGgaNumberOfParts << number
+                   << "must be more or equal: " << kGgaMinNumberOfParts;
     return result;
 }
 
 bool isRmcNumberValid(const int number) {
-    bool result = (number == kRmcNumberOfParts);
-    if (!result) qWarning() << kGpsMsgWrongRmcNumberOfParts << number;
+    bool result = (number >= kRmcMinNumberOfParts);
+    if (!result)
+        qWarning() << kGpsMsgWrongRmcNumberOfParts << number
+                   << "must be more or equal: " << kRmcMinNumberOfParts;
+    ;
     return result;
 }
 
@@ -118,6 +127,39 @@ bool isRmcStatusValid(const QString &flag) {
     bool result = (flag == "A");
     if (!result) qWarning() << kGpsMsgRmcFlagIsInvalid;
     return result;
+}
+
+bool isCourseValid(const double course) {
+    bool result = (course >= 0.0 && course <= 360.0);
+    if (!result) qWarning() << kGpsMsgCourseIsOutOfRange;
+    return result;
+}
+
+bool isDateValid(const QString &date) {
+    if (date.size() != 6 || !date.toUInt()) {
+        qWarning() << kGpsMsgDateIsInvalid << "(bad format)";
+        return false;
+    }
+
+    bool okDay, okMonth, okYear;
+    int day = date.midRef(0, 2).toInt(&okDay);
+    int month = date.midRef(2, 2).toInt(&okMonth);
+    int year = date.midRef(4, 2).toInt(&okYear);
+
+    if (!okDay || !okMonth || !okYear) {
+        qWarning() << kGpsMsgDateIsInvalid << "(parse error)";
+        return false;
+    }
+
+    year += 2000;
+
+    QDate qdate(year, month, day);
+    if (!qdate.isValid()) {
+        qWarning() << kGpsMsgDateIsInvalid << "(invalid calendar date)";
+        return false;
+    }
+
+    return true;
 }
 
 }  // end namespace
@@ -176,7 +218,10 @@ void GPSParser::parseRMC(const QString &line, bool &isValid) {
     isSpeedValueValid(data.speedKmh);
 
     data.course = parts[kRmcCoursePartIndex].toDouble();
+    isCourseValid(data.course);
+
     data.date = parts[kRmcDatePartIndex];
+    isDateValid(data.date);
 
     isValid = isRmcStatusValid(parts[kRmcStatusPartIndex]);
 }
