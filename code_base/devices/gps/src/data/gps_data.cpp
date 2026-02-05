@@ -4,7 +4,7 @@ namespace gps {
 
 QString toStyledString(const GpsData& data) {
     QStringList parts;
-    if (data.valid_gps_flag) {
+    if (data.isGpsDataValid) {
         parts << QString("Coordinates: %1, %2")
                      .arg(data.latitude, 0, 'f', 6)
                      .arg(data.longitude, 0, 'f', 6);
@@ -36,7 +36,7 @@ QString toStyledString(const GpsData& data) {
 }
 
 QString toCsvString(const GpsData& data) {
-    if (!data.valid_gps_flag) {
+    if (!data.isGpsDataValid) {
         return "";
     }
     return QString("%1,%2,%3,%4,%5,%6,%7,%8")

@@ -6,16 +6,19 @@
 #include <QStringList>
 
 struct GpsData {
-    bool isRangeValid = true;
     double latitude = 0.0;
     double longitude = 0.0;
     double altitude = 0.0;
-    QString timeUtc;
-    QString date;
-    bool valid_gps_flag = false;
-    int satellites = 0;
     double speedKmh = 0.0;
     double course = 0.0;
+    QString date;
+    QString timeUtc;
+    int satellites = 0;
+    bool isGpsDataValid = false;
+    // parsing errors
+    QStringList errors;
+
+    void clearErrors() { errors.clear(); }
 };
 Q_DECLARE_METATYPE(GpsData)
 
