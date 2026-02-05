@@ -9,12 +9,12 @@ namespace logger {
 
 const char kGpsFileLogName[] = "/gps.log";
 
-void saveGpsDataToFile(const GpsData &data, const QString &filePath) {
+void saveGpsDataToFile(const GpsData& data, const QString& filePath) {
     if (data.valid_gps_flag) {
         QFile file(filePath);
         if (file.open(QIODevice::Append | QIODevice::Text)) {
             QTextStream out(&file);
-            out << data.toCsvString();
+            out << gps::toCsvString(data);
             out.flush();
         } else {
             qDebug() << file.errorString();
@@ -22,7 +22,7 @@ void saveGpsDataToFile(const GpsData &data, const QString &filePath) {
     }
 }
 
-void saveGpsDataToLogFile(const GpsData &data) {
+void saveGpsDataToLogFile(const GpsData& data) {
     if (data.valid_gps_flag) {
         saveGpsDataToFile(
             data, QCoreApplication::applicationDirPath() + kGpsFileLogName);

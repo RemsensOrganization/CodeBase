@@ -19,7 +19,7 @@ GpsWidget::GpsWidget(QWidget *parent) : QWidget(parent) {
 }
 
 void GpsWidget::showGpsData(GpsData data) {
-    status->appendPlainText(data.toArseniyString());
+    status->appendPlainText(gps::toStyledString(data));
 };
 void GpsWidget::showGpsStatus(const QString &msg) {
     if (status) {

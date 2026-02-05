@@ -20,14 +20,13 @@ class GPSReceiver : public QObject {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE void start(
-        const QString &portName,
-        QSerialPort::BaudRate baudRate = QSerialPort::BaudRate::Baud9600);
+    void start(const QString &portName, QSerialPort::BaudRate baudRate =
+                                            QSerialPort::BaudRate::Baud9600);
     void stop();
 
 signals:
-    void getDataReceived(const QByteArray &data);
-    void sendStatus(const QString &status);
+    void gpsDataReceived(const QByteArray &data, QPrivateSignal);
+    void gpsStatusChanged(const QString &status, QPrivateSignal);
 
 private:
     void readLoop(const QString &portName, const int baudRate);

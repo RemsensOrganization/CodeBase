@@ -16,54 +16,15 @@ struct GpsData {
     int satellites = 0;
     double speedKmh = 0.0;
     double course = 0.0;
-
-    QString toArseniyString() const {
-        QStringList parts;
-        if (valid_gps_flag) {
-            parts << QString("Coordinates: %1, %2")
-                         .arg(latitude, 0, 'f', 6)
-                         .arg(longitude, 0, 'f', 6);
-
-            if (timeUtc.length() >= 6) {
-                QString hh = timeUtc.mid(0, 2);
-                QString mm = timeUtc.mid(2, 2);
-                QString ss = timeUtc.mid(4, 2);
-                parts << "Time (UTC): " + hh + ":" + mm + ":" + ss;
-            }
-
-            if (date.length() == 6) {
-                QString dd = date.mid(0, 2);
-                QString mm = date.mid(2, 2);
-                QString yy = date.mid(4, 2);
-                parts << "Date: " + dd + "." + mm + ".20" + yy;
-            }
-
-            parts << QString("Altitude: %1 m").arg(altitude, 0, 'f', 1);
-            parts << QString("Satellites: %1").arg(satellites);
-            parts << QString("Speed: %1 km/h").arg(speedKmh, 0, 'f', 1);
-            parts << QString("Course: %1°").arg(course, 0, 'f', 1);
-            parts << "\n";
-        } else {
-            parts << "No valid data";
-        }
-
-        return parts.join(" | ");
-    }
-    QString toCsvString() const {
-        if (!valid_gps_flag) {
-            return "";
-        }
-        return QString("%1,%2,%3,%4,%5,%6,%7,%8")
-            .arg(latitude, 0, 'f', 6)   // широта
-            .arg(longitude, 0, 'f', 6)  // долгота
-            .arg(altitude, 0, 'f', 1)   // высота
-            .arg(timeUtc)               // время UTC
-            .arg(date)                  // дата
-            .arg(satellites)  // количество спутников
-            .arg(speedKmh, 0, 'f', 1)  // скорость
-            .arg(course, 0, 'f', 1);   // курс
-    }
 };
 Q_DECLARE_METATYPE(GpsData)
+
+namespace gps {
+
+QString toStyledString(const GpsData& data);
+
+QString toCsvString(const GpsData& data);
+
+}  // namespace gps
 
 #endif  // DEVICES_GPS_SRC_DATA_GPS_DATA_H_

@@ -18,9 +18,9 @@ int main(int argc, char *argv[]) {
                                     QString("COM1"), QSerialPort::Baud9600);
     GpsWidget *gps_widget = new GpsWidget;
 
-    QObject::connect(gps_receiver, &GPSReceiver::sendStatus, gps_widget,
+    QObject::connect(gps_receiver, &GPSReceiver::gpsStatusChanged, gps_widget,
                      &GpsWidget::showGpsStatus);
-    QObject::connect(gps_receiver, &GPSReceiver::getDataReceived, gps_parser,
+    QObject::connect(gps_receiver, &GPSReceiver::gpsDataReceived, gps_parser,
                      &GPSParser::parseLine);
     QObject::connect(gps_parser, &GPSParser::gpsUpdated, gps_widget,
                      &GpsWidget::showGpsData);
@@ -32,10 +32,5 @@ int main(int argc, char *argv[]) {
         gps_parser->deleteLater();
     });
     gps_widget->show();
-    GpsData gps_data;
-    gps_data.valid_gps_flag = true;
-    gps_data.latitude = 53.3;
-    gps_data.longitude = 27.5;
-    emit gps_parser->gpsUpdated(gps_data);
     return app.exec();
 }

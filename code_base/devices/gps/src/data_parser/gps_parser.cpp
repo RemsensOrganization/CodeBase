@@ -175,7 +175,7 @@ void GPSParser::parseLine(const QString &line) {
         parseRMC(line, isRMC_Ready);
     }
     if (isGGA_Ready && isRMC_Ready) {
-        emit gpsUpdated(data);
+        emit gpsUpdated(data, QPrivateSignal{});
         isGGA_Ready = false;
         isRMC_Ready = false;
     }
