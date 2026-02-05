@@ -43,9 +43,9 @@ constexpr char kGpsMsgVelocityIsOutOfRange[] = "Velocity is out of range";
 constexpr char kGpsMsgNumberOfSattelitesIsOutOfRange[] =
     "Number of satellites is out of range";
 constexpr char kGpsMsgWrongRmcNumberOfParts[] =
-    "Rmc number of parts is wrong. Must be more %1 or equal: %2";
+    "Rmc number of parts is wrong. Must be more than %1 or equal: %2 fact: %3";
 constexpr char kGpsMsgWrongGgaNumberOfParts[] =
-    "Gga number of parts is wrong. Must be more %1 or equal: %2";
+    "Gga number of parts is wrong. Must be more than %1 or equal: %2 fact: %3";
 constexpr char kGpsMsgNoDirectionSymbolError[] = "Missing direction indicator";
 constexpr char kGpsMsgConvertToDegreesError[] = "Failed to convert to degrees";
 constexpr char kGpsMsgCourseIsOutOfRange[] = "Course is out of range";
@@ -108,8 +108,9 @@ bool isGgaNumberValid(const int number, QStringList& errors) {
     bool result = (number >= kGgaMinNumberOfParts);
     if (!result) {
         errors.append(QString(kGpsMsgWrongGgaNumberOfParts)
-                          .arg(number)
-                          .arg(kGgaMinNumberOfParts));
+                          .arg(kGgaMinNumberOfParts)
+                          .arg(kGgaMinNumberOfParts)
+                          .arg(number));
     }
     return result;
 }
@@ -118,8 +119,9 @@ bool isRmcNumberValid(const int number, QStringList& errors) {
     bool result = (number >= kRmcMinNumberOfParts);
     if (!result)
         errors.append(QString(kGpsMsgWrongRmcNumberOfParts)
-                          .arg(number)
-                          .arg(kRmcMinNumberOfParts));
+                          .arg(kRmcMinNumberOfParts)
+                          .arg(kRmcMinNumberOfParts)
+                          .arg(number));
     ;
     return result;
 }
