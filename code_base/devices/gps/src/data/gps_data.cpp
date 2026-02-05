@@ -1,5 +1,6 @@
 #include "gps_data.h"
 
+#include <QDebug>
 #include <QJsonObject>
 
 #include "qjsondocument.h"
@@ -64,11 +65,13 @@ QString toCsvString(const GpsData& data) {
 }
 
 QString toCompactJson(const GpsData& data) {
-    return GpsDataToJson(data).toJson(QJsonDocument::Compact);
+    QString result = GpsDataToJson(data).toJson(QJsonDocument::Compact);
+    return result;
 }
 
 QString toIndentedJson(const GpsData& data) {
-    return GpsDataToJson(data).toJson(QJsonDocument::Indented);
+    QString result = GpsDataToJson(data).toJson(QJsonDocument::Indented);
+    return result;
 }
 
 }  // end namespace gps
