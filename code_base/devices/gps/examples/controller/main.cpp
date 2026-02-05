@@ -1,11 +1,11 @@
 #include <QApplication>
 #include <QObject>
 
-#include "gps_widget.h"
 #include "QDebug"
 #include "QThread"
 #include "controller.h"
 #include "gps_data.h"
+#include "gps_widget.h"
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<GpsData>("GpsData");
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     gps_widget->show();
     // mock gps data
     GpsData data;
-    data.valid_gps_flag = true;
+    data.isGpsDataValid = true;
     data.latitude = 53.6;
     data.longitude = 27.3;
     // emulate gps data recieved

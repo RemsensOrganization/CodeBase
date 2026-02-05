@@ -60,9 +60,9 @@ void GpsController::initObjects() {
     detector = new GpsPortAutoDetector(this);
     receiver = new GPSReceiver();
     parser = new GPSParser();
-    connect(receiver, &GPSReceiver::getDataReceived, parser,
+    connect(receiver, &GPSReceiver::gpsDataReceived, parser,
             &GPSParser::parseLine);
-    connect(receiver, &GPSReceiver::sendStatus, this,
+    connect(receiver, &GPSReceiver::gpsStatusChanged, this,
             &GpsController::updateStatus);
     connect(parser, &GPSParser::gpsUpdated, this,
             &GpsController::handleParsedData);

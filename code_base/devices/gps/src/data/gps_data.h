@@ -1,6 +1,7 @@
 #ifndef DEVICES_GPS_SRC_DATA_GPS_DATA_H_
 #define DEVICES_GPS_SRC_DATA_GPS_DATA_H_
 
+#include <QJsonObject>
 #include <QMetaType>  // IWYU pragma: keep
 #include <QString>
 #include <QStringList>
@@ -27,6 +28,10 @@ namespace gps {
 QString toStyledString(const GpsData& data);
 
 QString toCsvString(const GpsData& data);
+
+QString toCompactJson(const GpsData& data);
+
+QString toIndentedJson(const GpsData& data);
 
 }  // namespace gps
 

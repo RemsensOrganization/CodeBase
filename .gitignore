@@ -14,6 +14,7 @@
 
 /.qmake.cache
 /.qmake.stash
+*.qmake.stash
 *.pro.user
 *.pro.user.*
 *.qbs.user
@@ -37,3 +38,7 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
+
+/.qtc_clangd
+debug
+release
