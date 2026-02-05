@@ -39,6 +39,7 @@ Makefile*
 # QtCtreator CMake
 CMakeLists.txt.user*
 
-/.qtc_clangd
+.qtc_clangd
 debug
 release
+

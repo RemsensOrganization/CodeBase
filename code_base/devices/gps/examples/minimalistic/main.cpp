@@ -25,8 +25,7 @@ int main(int argc, char *argv[]) {
     QObject::connect(gps_parser, &GPSParser::gpsUpdated, gps_widget,
                      &GpsWidget::showGpsData);
 
-    auto future =
-        QtConcurrent::run(gps_receiver, &GPSReceiver::startInAutoMode);
+    auto future = QtConcurrent::run(gps_receiver, &GPSReceiver::startCOM, 2);
     QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
         gps_receiver->stop();
         future.waitForFinished();

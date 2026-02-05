@@ -22,6 +22,9 @@ class GPSReceiver : public QObject {
 public:
     void start(const QString &portName, QSerialPort::BaudRate baudRate);
     void startInAutoMode() { start("", QSerialPort::Baud9600); }
+    void startCOM(const int COM) {
+        start(QString::number(COM), QSerialPort::Baud9600);
+    }
     void stop();
 
 signals:
