@@ -9,7 +9,7 @@ void gps_logger_UnitTests ::gps_logger_save_to_file_Test() {
     GpsData data;
     data.latitude = 53.4;
     data.longitude = 27.6;
-    data.valid_gps_flag = true;
+    data.isGpsDataValid = true;
     for (int i = 0; i < 5; ++i) {
         logger::saveGpsDataToLogFile(data);
     }
