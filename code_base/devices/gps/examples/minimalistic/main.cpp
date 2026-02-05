@@ -11,11 +11,11 @@
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<GpsData>("GpsData");
+
     QApplication app(argc, argv);
+
     GPSReceiver *gps_receiver = new GPSReceiver;
     GPSParser *gps_parser = new GPSParser;
-    auto future = QtConcurrent::run(gps_receiver, &GPSReceiver::start,
-                                    QString("COM1"), QSerialPort::Baud9600);
     GpsWidget *gps_widget = new GpsWidget;
 
     QObject::connect(gps_receiver, &GPSReceiver::gpsStatusChanged, gps_widget,
@@ -25,12 +25,16 @@ int main(int argc, char *argv[]) {
     QObject::connect(gps_parser, &GPSParser::gpsUpdated, gps_widget,
                      &GpsWidget::showGpsData);
 
+    auto future =
+        QtConcurrent::run(gps_receiver, &GPSReceiver::startInAutoMode);
     QObject::connect(&app, &QApplication::aboutToQuit, [&]() {
         gps_receiver->stop();
         future.waitForFinished();
         gps_receiver->deleteLater();
         gps_parser->deleteLater();
     });
+
     gps_widget->show();
+
     return app.exec();
 }
