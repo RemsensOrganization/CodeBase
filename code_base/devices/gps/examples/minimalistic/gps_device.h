@@ -14,8 +14,7 @@
 class GPSDevice : public QObject {
     Q_OBJECT
 public:
-    static std::pair<GPSDevice *, GpsWidget *> createWithWidget(
-        QWidget *parent = nullptr);
+    GpsWidget *createWidget(QWidget *parent = nullptr);
 
     explicit GPSDevice(QObject *parent = nullptr);
     ~GPSDevice();

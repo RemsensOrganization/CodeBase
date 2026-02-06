@@ -36,23 +36,35 @@ void exmpl_pure_objects(QApplication &app) {
     gps_widget->show();
 }
 
-void exmpl_with_widget() {
+// останавливаем прием через  gps->stop() если хотим потом иметь возможность
+// продолжить через gps->start(); если не хотим, то просто delete gps; в
+// конце программы
+
+void exmpl_without_widget() {
     qRegisterMetaType<GpsData>("GpsData");
-    GpsWidget *gps_widget = new GpsWidget;
-    gps_widget->show();
-
     GPSDevice *gps = new GPSDevice;
-    QObject::connect(gps, &GPSDevice::gpsDataUpdated, gps_widget,
-                     &GpsWidget::showGpsData);
-    QObject::connect(gps, &GPSDevice::gpsStatusChanged, gps_widget,
-                     &GpsWidget::showGpsStatus);
-
     gps->start();
 
-    // останавливаем прием через  gps->stop() если хотим потом иметь возможность
-    // продолжить через gps->start(); если не хотим, то просто delete gps; в
-    // конце программы
-    // Примеры:
+    // Подключаем сигналы к логике пользователя данной библиотеки
+    QObject::connect(gps, &GPSDevice::gpsDataUpdated, [](const GpsData &data) {
+        qDebug() << "----user logic---- широта: " << data.latitude;
+    });
+    QObject::connect(gps, &GPSDevice::gpsStatusChanged,
+                     [](const QString &status) {
+                         qDebug() << "----user logic---- Status:" << status;
+                     });
+
+    QTimer::singleShot(3000, gps, &GPSDevice::stop);
+    QTimer::singleShot(5000, gps, SLOT(start()));
+    QTimer::singleShot(7000, [gps]() { delete gps; });
+}
+
+void exmpl_with_widget() {
+    qRegisterMetaType<GpsData>("GpsData");
+    GPSDevice *gps = new GPSDevice;
+    auto widget = gps->createWidget();
+    widget->show();
+    gps->start();
 
     QTimer::singleShot(3000, gps, &GPSDevice::stop);
     QTimer::singleShot(5000, gps, SLOT(start()));
@@ -63,6 +75,7 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     // exmpl_pure_objects(app);
-    exmpl_with_widget();
+    //    exmpl_with_widget();
+    exmpl_without_widget();
     return app.exec();
 }

@@ -1,14 +1,12 @@
 #include "gps_device.h"
 
-std::pair<GPSDevice *, GpsWidget *> GPSDevice::createWithWidget(
-    QWidget *parent) {
-    GPSDevice *gps_device = new GPSDevice;
+GpsWidget *GPSDevice::createWidget(QWidget *parent) {
     GpsWidget *widget = new GpsWidget(parent);
-    QObject::connect(gps_device, &GPSDevice::gpsDataUpdated, widget,
+    QObject::connect(this, &GPSDevice::gpsDataUpdated, widget,
                      &GpsWidget::showGpsData);
-    QObject::connect(gps_device, &GPSDevice::gpsStatusChanged, widget,
+    QObject::connect(this, &GPSDevice::gpsStatusChanged, widget,
                      &GpsWidget::showGpsStatus);
-    return {gps_device, widget};
+    return widget;
 }
 
 GPSDevice::GPSDevice(QObject *parent) : QObject(parent) {
