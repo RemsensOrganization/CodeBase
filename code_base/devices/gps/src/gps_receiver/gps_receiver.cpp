@@ -1,6 +1,5 @@
 #include "gps_receiver.h"
 
-#include <Windows.h>
 #include <gps_port_autodetector.h>
 
 #include <QDebug>
@@ -100,7 +99,7 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
                     emit gpsStatusChanged(
                         QString(msgs::kGpsMsgIsWaitingForDevice),
                         QPrivateSignal{});
-                    Sleep(TRY_TO_RECONNECT_INTERVAL_MS);
+                    QThread::msleep(TRY_TO_RECONNECT_INTERVAL_MS);
                 }
             }
         }
