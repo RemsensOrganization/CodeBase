@@ -19,7 +19,7 @@ class GpsPortAutoDetector : public QObject {
     Q_OBJECT
 public:
     explicit GpsPortAutoDetector(QObject* parent = nullptr);
-    void FindPorts();
+    void findPorts();
     QList<QSerialPortInfo> getGpsPorts() const;
     QString getGpsPortName() const { return gpsPortName; }
 

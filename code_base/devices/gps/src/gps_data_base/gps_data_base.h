@@ -27,7 +27,7 @@ class GpsDataBase {
 public:
     explicit GpsDataBase(const QString& filePath = "gps_database.json");
 
-    void createDefaultDatabase();
+    void createDefaultDatabaseIfNotExist();
     QList<GpsDeviceEntry> loadDatabase();
 
 private:

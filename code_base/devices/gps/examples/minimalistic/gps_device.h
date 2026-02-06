@@ -14,7 +14,13 @@
 class GPSDevice : public QObject {
     Q_OBJECT
 public:
+    static std::pair<GPSDevice *, GpsWidget *> createWithWidget(
+        QWidget *parent = nullptr);
+
     explicit GPSDevice(QObject *parent = nullptr);
+    ~GPSDevice();
+
+public slots:
     void start();             // autodetect port
     void start(int comPort);  // standart baudRate
     void start(int comPort, QSerialPort::BaudRate baudRate);

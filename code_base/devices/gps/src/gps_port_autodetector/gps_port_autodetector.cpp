@@ -13,7 +13,7 @@ const char kGpsMsgIsNotGpsPort[] = "Not a GPS port.";
 
 GpsPortAutoDetector::GpsPortAutoDetector(QObject* parent) : QObject(parent) {
     GpsDataBase db("gps_database.json");
-    db.createDefaultDatabase();
+    db.createDefaultDatabaseIfNotExist();
     gpsDatabase = db.loadDatabase();
 }
 
@@ -40,7 +40,7 @@ bool GpsPortAutoDetector::isCOMPortGPS(const QSerialPortInfo& portInfo) const {
 }
 
 // функция определения портов и проверки GPS
-void GpsPortAutoDetector::FindPorts() {
+void GpsPortAutoDetector::findPorts() {
     qDebug() << QString(msgs::kGpsMsgIsDevicesLoaded) << gpsDatabase.size();
     detectedPorts = QSerialPortInfo::availablePorts();
     gpsPorts.clear();

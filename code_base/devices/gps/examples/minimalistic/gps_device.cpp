@@ -1,9 +1,19 @@
 #include "gps_device.h"
 
+std::pair<GPSDevice *, GpsWidget *> GPSDevice::createWithWidget(
+    QWidget *parent) {
+    GPSDevice *gps_device = new GPSDevice;
+    GpsWidget *widget = new GpsWidget(parent);
+    QObject::connect(gps_device, &GPSDevice::gpsDataUpdated, widget,
+                     &GpsWidget::showGpsData);
+    QObject::connect(gps_device, &GPSDevice::gpsStatusChanged, widget,
+                     &GpsWidget::showGpsStatus);
+    return {gps_device, widget};
+}
+
 GPSDevice::GPSDevice(QObject *parent) : QObject(parent) {
     gps_receiver = new GPSReceiver;
     gps_parser = new GPSParser;
-    gps_port_autodetector = new GpsPortAutoDetector;
 
     connect(gps_receiver, &GPSReceiver::gpsDataReceived, gps_parser,
             &GPSParser::parseLine);
@@ -15,8 +25,23 @@ GPSDevice::GPSDevice(QObject *parent) : QObject(parent) {
                      &GPSDevice::gpsDataUpdated);
 }
 
+GPSDevice::~GPSDevice() {
+    stop();
+    if (gps_port_autodetector) delete gps_port_autodetector;
+    delete gps_receiver;
+    delete gps_parser;
+    qDebug() << "GPSDevice is deleted";
+}
+
 void GPSDevice::start() {
-    future = QtConcurrent::run(gps_receiver, &GPSReceiver::startInAutoMode);
+    // пока что логика такая, что старт и стоп вызыюваются только 1 раз.
+    // случаи, когда старт-стоп-старт-стоп не обработаны
+
+    gps_port_autodetector = new GpsPortAutoDetector;
+    gps_port_autodetector->findPorts();
+    QString port = gps_port_autodetector->getGpsPortName();
+    future = QtConcurrent::run(gps_receiver, &GPSReceiver::start, port,
+                               QSerialPort::Baud9600);
 }
 
 void GPSDevice::start(int comPort) {
@@ -29,8 +54,8 @@ void GPSDevice::start(int comPort, QSerialPort::BaudRate baudRate) {
 }
 
 void GPSDevice::stop() {
-    gps_receiver->stop();
-    future.waitForFinished();
-    gps_receiver->deleteLater();
-    gps_parser->deleteLater();
+    if (future.isRunning()) {
+        gps_receiver->stop();
+        future.waitForFinished();
+    }
 }

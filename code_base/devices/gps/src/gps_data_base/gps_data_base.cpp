@@ -18,7 +18,7 @@ const char kJsonMsgDevicesLoaded[] = "Devices loaded";
 
 GpsDataBase::GpsDataBase(const QString& filePath) : jsonFilePath(filePath) {}
 
-void GpsDataBase::createDefaultDatabase() {
+void GpsDataBase::createDefaultDatabaseIfNotExist() {
     if (QFile::exists(jsonFilePath)) return;
 
     QJsonArray deviceArray;

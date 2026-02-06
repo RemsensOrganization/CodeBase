@@ -47,7 +47,7 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
 
     if (targetPort.isEmpty()) {
         GpsPortAutoDetector detector;
-        detector.FindPorts();
+        detector.findPorts();
         auto gpsPorts = detector.getGpsPorts();
         if (!gpsPorts.isEmpty()) {
             targetPort = gpsPorts.first().portName();
@@ -107,5 +107,6 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
     }
 
     gps.close();
+    emit gpsStatusChanged(QString(msgs::kGpsMsgLoopFinished), QPrivateSignal{});
     qDebug() << QString(msgs::kGpsMsgLoopFinished);
 }
