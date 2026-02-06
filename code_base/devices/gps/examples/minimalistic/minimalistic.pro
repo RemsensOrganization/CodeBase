@@ -11,6 +11,10 @@ include($$SRC_DIR/gps.pri)
 include(../gui/gui.pri)
 
 SOURCES += main.cpp\
-           
+            \
+           gps_device.cpp
 
 INCLUDEPATH += $$SRC_DIR
+
+HEADERS += \
+    gps_device.h

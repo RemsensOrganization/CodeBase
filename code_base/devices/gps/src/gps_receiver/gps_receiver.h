@@ -25,6 +25,9 @@ public:
     void startCOM(const int COM) {
         start((QString("COM%1").arg(COM)), QSerialPort::Baud9600);
     }
+    void startCOM(const int COM, QSerialPort::BaudRate baudRate) {
+        start((QString("COM%1").arg(COM)), baudRate);
+    }
     void stop();
 
 signals:
