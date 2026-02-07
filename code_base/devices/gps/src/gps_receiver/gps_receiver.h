@@ -29,6 +29,7 @@ public:
     void startCOM(const int COM, QSerialPort::BaudRate baudRate) {
         start((QString("COM%1").arg(COM)), baudRate);
     }
+    void startLinuxCom(const QString portName) { start(portName); };
     void stop();
 
 signals:
