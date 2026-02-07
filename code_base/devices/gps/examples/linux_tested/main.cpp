@@ -6,6 +6,7 @@
 
 #include "QtConcurrent/QtConcurrent"  // IWYU pragma: keep
 #include "gps_data.h"
+#include "gps_logger.h"
 #include "gps_parser.h"
 #include "gps_receiver.h"
 #include "qobjectdefs.h"
@@ -13,11 +14,18 @@
 QFuture<void> future;
 GPSReceiver *gps_receiver;
 
+void stopGpsReciever() {
+    if (gps_receiver) {
+        gps_receiver->stop();
+        future.waitForFinished();
+    }
+    QCoreApplication::quit();
+}
+
 void handleSignal(int signal) {
     if (signal == SIGINT || signal == SIGTERM) {
         qDebug() << "Signal received, stopping GPSReceiver...";
-        if (gps_receiver) gps_receiver->stop();
-        QCoreApplication::quit();
+        stopGpsReciever();
     }
 }
 
@@ -27,8 +35,7 @@ void watchForQuitKey() {
     while (std::cin.get(c)) {
         if (c == 'q' || c == 'Q') {
             qDebug() << "Key 'q' pressed, quitting application...";
-            if (gps_receiver) gps_receiver->stop();
-            QCoreApplication::quit();
+            stopGpsReciever();
             break;
         }
     }
@@ -36,23 +43,33 @@ void watchForQuitKey() {
 
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
+
     // Устанавливаем обработчики сигналов
     std::signal(SIGINT, handleSignal);
     std::signal(SIGTERM, handleSignal);
-    qRegisterMetaType<GpsData>("GpsData");
+
     gps_receiver = new GPSReceiver;
-    GPSParser *gps_parser = new GPSParser;
+    QObject::connect(gps_receiver, &GPSParser::gpsDataUpdated,
+                     [&](const GpsData data) {
+                         qDebug() << gps::toCsvString(data);
+                         logger::saveGpsDataToLogFile(data);
+                     });
 
-    QObject::connect(gps_receiver, &GPSReceiver::gpsDataReceived, gps_parser,
-                     &GPSParser::parseLine);
+    // Проверяем аргументы командной строки
+    QString portPath;
+    if (argc > 1) {
+        portPath = QString(argv[1]);
+    } else {
+        qWarning() << "default COM port will be used.....";
+        portPath = QString("/dev/pts/1");
+    }
 
-    future = QtConcurrent::run(gps_receiver, &GPSReceiver::startLinuxCom,
-                               QString("/dev/pts/6"));
+    future = QtConcurrent::run(gps_receiver, &GPSReceiver::start, portPath);
+
     QObject::connect(&app, &QCoreApplication::aboutToQuit, &app, [&]() {
         gps_receiver->stop();
         future.waitForFinished();
         gps_receiver->deleteLater();
-        gps_parser->deleteLater();
     });
 
     // Запускаем поток для отслеживания клавиши q

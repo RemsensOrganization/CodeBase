@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QSerialPort>
 
+#include "gps_parser.h"
+
 namespace msgs {
 
 extern const char kGpsAutoPortSelected[];
@@ -16,8 +18,11 @@ extern const char kGpsMsgLoopFinished[];
 
 }  // end namespace msgs
 
-class GPSReceiver : public QObject {
+class GPSReceiver : public GPSParser {
     Q_OBJECT
+
+public:
+    GPSReceiver() { qRegisterMetaType<GpsData>("GpsData"); }
 
 public:
     void start(const QString &portName,
@@ -29,11 +34,12 @@ public:
     void startCOM(const int COM, QSerialPort::BaudRate baudRate) {
         start((QString("COM%1").arg(COM)), baudRate);
     }
-    void startLinuxCom(const QString portName) { start(portName); };
+    void start(const QString portName) {
+        start(portName, QSerialPort::Baud9600);
+    };
     void stop();
 
 signals:
-    void gpsDataReceived(const QByteArray &data, QPrivateSignal);
     void gpsStatusChanged(const QString &status, QPrivateSignal);
 
 private:

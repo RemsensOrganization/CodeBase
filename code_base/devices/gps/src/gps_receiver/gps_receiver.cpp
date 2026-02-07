@@ -73,7 +73,7 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
         if (gps.isOpen() && gps.waitForReadyRead(GPS_READ_TIMEOUT_MS)) {
             QByteArray chunk = gps.readAll();
             if (!chunk.isEmpty()) {
-                emit gpsDataReceived(chunk, QPrivateSignal{});
+                parseLine(chunk);
             }
         } else {
             emit gpsStatusChanged(QString(msgs::kGpsMsgNoDataOrPortClosed),

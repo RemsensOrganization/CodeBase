@@ -189,7 +189,7 @@ void GPSParser::parseLine(const QString& line) {
             qWarning() << data.errors;
             data.clearErrors();
         }
-        emit gpsUpdated(data, QPrivateSignal{});
+        emit gpsDataUpdated(data, QPrivateSignal{});
         isGGA_Ready = false;
         isRMC_Ready = false;
     }

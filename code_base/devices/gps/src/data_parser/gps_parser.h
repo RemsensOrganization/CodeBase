@@ -13,7 +13,7 @@ public:
     void parseLine(const QString &line);
 
 signals:
-    void gpsUpdated(const GpsData &data, QPrivateSignal);
+    void gpsDataUpdated(const GpsData &data, QPrivateSignal);
 
 private:
     void parseGGA(const QString &line, bool &isValid);
