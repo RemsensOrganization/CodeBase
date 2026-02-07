@@ -46,7 +46,8 @@ int main(int argc, char *argv[]) {
     QObject::connect(gps_receiver, &GPSReceiver::gpsDataReceived, gps_parser,
                      &GPSParser::parseLine);
 
-    future = QtConcurrent::run(gps_receiver, &GPSReceiver::startCOM, 3);
+    future = QtConcurrent::run(gps_receiver, &GPSReceiver::start, "/dev/pts/2",
+                               QSerialPort::BaudRate::Baud9600);
     QObject::connect(&app, &QCoreApplication::aboutToQuit, &app, [&]() {
         gps_receiver->stop();
         future.waitForFinished();
