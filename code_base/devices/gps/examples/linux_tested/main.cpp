@@ -97,11 +97,12 @@ int main(int argc, char *argv[]) {
     }
 
     gps_receiver = new GPSReceiver;
-    QObject::connect(gps_receiver, &GPSParser::gpsDataUpdated,
-                     [&](const GpsData data) {
-                         logger::saveGpsDataToLogFile(data);
-                         qDebug() << gps::toStyledString(data);
-                     });
+    QObject::connect(
+        gps_receiver, &GPSParser::gpsDataUpdated, [&](const GpsData data) {
+            logger::saveGpsDataToLogFile(data);
+            auto s = gps::toCsvString(data);
+            std::cout << s.remove('\n').toStdString() << "\r" << std::flush;
+        });
 
     future = QtConcurrent::run(gps_receiver, &GPSReceiver::start, comPort);
 

@@ -57,21 +57,19 @@ QString toCsvString(const GpsData& data) {
         .arg(data.latitude, 0, 'f', 6)
         .arg(data.longitude, 0, 'f', 6)
         .arg(data.altitude, 0, 'f', 1)
-        .arg(data.timeUtc)
-        .arg(data.date)
-        .arg(data.satellites)
         .arg(data.speedKmh, 0, 'f', 1)
-        .arg(data.course, 0, 'f', 1);
+        .arg(data.course, 0, 'f', 1)
+        .arg(data.date)
+        .arg(data.timeUtc)
+        .arg(data.satellites);
 }
 
 QString toCompactJson(const GpsData& data) {
-    QString result = GpsDataToJson(data).toJson(QJsonDocument::Compact);
-    return result;
+    return GpsDataToJson(data).toJson(QJsonDocument::Compact);
 }
 
 QString toIndentedJson(const GpsData& data) {
-    QString result = GpsDataToJson(data).toJson(QJsonDocument::Indented);
-    return result;
+    return GpsDataToJson(data).toJson(QJsonDocument::Indented);
 }
 
 }  // end namespace gps
