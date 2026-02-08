@@ -1,0 +1,12 @@
+
+services:
+  qt-socat:
+    build: .
+    image: out-qt-socat:latest
+    container_name: qt-socat
+    volumes:
+      - ./:/src
+    stdin_open: true    
+    tty: true
+    command: bash
+    restart: "no"
