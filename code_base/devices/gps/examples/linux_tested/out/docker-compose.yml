@@ -5,8 +5,9 @@ services:
     image: out-qt-socat:latest
     container_name: qt-socat
     volumes:
-      - ./:/src
+      - "${PROJECT_PATH}:/src"
     stdin_open: true    
     tty: true
     command: bash
     restart: "no"
+

@@ -36,4 +36,4 @@ sleep 3
 ls -l $COM_PORT
 
 # Запускаем приложение
-./gps_linux "$COM_PORT"
+./gps_linux -c "$COM_PORT"
