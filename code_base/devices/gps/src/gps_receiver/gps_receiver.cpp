@@ -94,8 +94,8 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
                     if (portInfo.portName() == targetPort) {
                         gps.setPortName(portInfo.portName());
                         if (gps.open(QIODevice::ReadOnly)) {
-                            qDebug() << QString(msgs::kGpsMsgIsReconnected)
-                                     << portInfo.portName();
+                            emit gpsStatusChanged(msgs::kGpsMsgIsConnected,
+                                                  QPrivateSignal{});
                             reconnected = true;
                             break;
                         }
