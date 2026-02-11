@@ -1,9 +1,18 @@
-QT += serialport
+QT += core gui widgets serialport concurrent
 
-DATA_PARSER_DIR = $$PWD
+include(../../pathes.pri)
+include($$SRC_DIR/gps.pri)
 
-INCLUDEPATH += $$DATA_PARSER_DIR
+# Исходники
+SOURCES += \
+    $$PWD/gps_device.cpp \
+    $$PWD/gps_widget.cpp
 
-SOURCES += $$DATA_PARSER_DIR/gps_parser.cpp
+HEADERS += \
+    $$PWD/gps_device.h \
+    $$PWD/gps_widget.h
 
-HEADERS += $$DATA_PARSER_DIR/gps_parser.h
+# Зависимости от базовых GPS классов (из ../../src)
+INCLUDEPATH += \
+$$SRC_DIR \
+$$SOLUTIONS_DIR/gps_device
