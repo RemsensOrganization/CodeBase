@@ -65,10 +65,15 @@ void exmpl_with_widget() {
     auto widget = gps->createWidget();
     widget->show();
     gps->start();
+    gps->stop();
+    gps->start();
+    gps->stop();
+    gps->start();
+    gps->stop();
 
-    QTimer::singleShot(3000, gps, &GPSDevice::stop);
-    QTimer::singleShot(5000, gps, SLOT(start()));
-    QTimer::singleShot(7000, [gps]() { delete gps; });
+    // QTimer::singleShot(3000, gps, &GPSDevice::stop);
+    // QTimer::singleShot(5000, gps, SLOT(start()));
+    // QTimer::singleShot(7000, [gps]() { delete gps; });
 }
 
 int main(int argc, char *argv[]) {

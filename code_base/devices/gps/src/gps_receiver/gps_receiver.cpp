@@ -25,11 +25,17 @@ const char kGpsMsgLoopFinished[] = "GPS module is terminated";
 
 }  // end namespace msgs
 
+void GPSReceiver::start() { start("", QSerialPort::Baud9600); }
+
 void GPSReceiver::start(const QString &portName,
                         QSerialPort::BaudRate baudRate) {
     if (isRun) return;
     isRun = true;
     readLoop(portName, baudRate);
+}
+
+void GPSReceiver::start(const QString &portName) {
+    start(portName, QSerialPort::Baud9600);
 }
 
 void GPSReceiver::stop() { isRun = false; }
