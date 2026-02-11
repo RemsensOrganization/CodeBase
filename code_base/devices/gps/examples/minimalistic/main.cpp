@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     // exmpl_pure_objects(app);
-    //    exmpl_with_widget();
-    exmpl_without_widget();
+    exmpl_with_widget();
+    // exmpl_without_widget();
     return app.exec();
 }

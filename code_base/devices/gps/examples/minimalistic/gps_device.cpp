@@ -2,6 +2,7 @@
 
 GpsWidget *GPSDevice::createWidget(QWidget *parent) {
     GpsWidget *widget = new GpsWidget(parent);
+
     QObject::connect(this, &GPSDevice::gpsDataUpdated, widget,
                      &GpsWidget::showGpsData);
     QObject::connect(this, &GPSDevice::gpsStatusChanged, widget,
