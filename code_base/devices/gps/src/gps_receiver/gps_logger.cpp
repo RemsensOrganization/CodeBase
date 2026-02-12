@@ -1,3 +1,5 @@
+#include "gps_logger.h"
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
@@ -7,9 +9,7 @@
 
 namespace logger {
 
-const char kGpsFileLogName[] = "/gps.log";
-
-enum class saveFormat { styled, csv, jsonCompact, jsonIndented };
+const char kGpsFileLogName[] = "/gps_log.txt";
 
 void saveGpsDataToFile(const GpsData& data, saveFormat format,
                        const QString& filePath) {

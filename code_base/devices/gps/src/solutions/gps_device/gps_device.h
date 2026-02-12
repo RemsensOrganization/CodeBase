@@ -5,6 +5,7 @@
 
 #include "QtConcurrent/QtConcurrent"  // IWYU pragma: keep
 #include "gps_data.h"
+#include "gps_logger.h"
 #include "gps_parser.h"
 #include "gps_port_autodetector.h"
 #include "gps_receiver.h"
@@ -32,8 +33,9 @@ public slots:
     void start(const QString &portName, QSerialPort::BaudRate baudRate);
     void stop();  // вызов есть в  деструкторе класса
 
-    void writeParcedToTextFile(bool isWriteBadData,
-                               const QString &fileFullPath = kTextFileName);
+    void writeParcedToTextFile(logger::saveFormat format,
+                               const QString &fileFullPath);
+    void writeParcedToTextFile(logger::saveFormat format);
     void writeAllToBinFile(const QString &fileFullPath = kBinFileName);
 
 signals:

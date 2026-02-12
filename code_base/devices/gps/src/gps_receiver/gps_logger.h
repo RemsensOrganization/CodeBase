@@ -6,10 +6,12 @@
 namespace logger {
 
 extern const char kGpsFileLogName[];
+enum class saveFormat { styled, csv, jsonCompact, jsonIndented };
 
-void saveGpsDataToFile(const GpsData &data, const QString &filePath);
+void saveGpsDataToFile(const GpsData &data, saveFormat format,
+                       const QString &filePath);
 
-void saveGpsDataToFile(const GpsData &data);
+void saveGpsDataToFile(const GpsData &data, saveFormat format);  // рядом с exe
 
 }  // namespace logger
 
