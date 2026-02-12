@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setApplicationVersion("0.0.1");
 
-    GPS_MODULE_VARIANTS example_num = GPS_MODULE_VARIANTS::GPS_MODULE_CLI;
+    GPS_MODULE_VARIANTS example_num = GPS_MODULE_VARIANTS::GPS_MODULE_WIDGET;
 
     switch (example_num) {
         case GPS_MODULE_VARIANTS::GPS_MODULE_CLI:

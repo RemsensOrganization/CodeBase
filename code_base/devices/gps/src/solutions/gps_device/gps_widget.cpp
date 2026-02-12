@@ -39,5 +39,3 @@ void GpsWidget::showGpsData(const GpsData &data) {
 void GpsWidget::showGpsStatus(const QString &status) {
     gpsStatusLabel->setText(status);
 };
-
-QPlainTextEdit *status;
