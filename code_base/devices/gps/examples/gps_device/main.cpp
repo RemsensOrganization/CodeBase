@@ -1,9 +1,7 @@
 #include <QApplication>
 #include <QCommandLineParser>
 
-#include "csignal"
 #include "gps_device.h"
-#include "iostream"
 
 enum class GPS_MODULE_VARIANTS {
     GPS_MODULE_CLI,
@@ -60,16 +58,17 @@ void exmpl_CLI(QApplication &app) {
     parser.addVersionOption();
 
     // Опции
-    QCommandLineOption pathOption({"p", "path"}, "working directory", "path");
+    QCommandLineOption pathOption({"p", "path"}, "path to file", "gps_log.txt");
     parser.addOption(pathOption);
 
     QCommandLineOption comOption({"c", "com"}, "com port name", "/dev/pts/1");
     parser.addOption(comOption);
 
-    QCommandLineOption baudRateOption({"b", "baud"}, "9600", "logfile");
+    QCommandLineOption baudRateOption({"b", "baud"}, "baud rate", "9600");
     parser.addOption(baudRateOption);
 
-    QCommandLineOption logOption({"l", "log"}, "path to gps.log.", "logfile");
+    QCommandLineOption logOption({"z", "zerolevel"},
+                                 "save zero level data flag", "false");
     parser.addOption(logOption);
 
     QCommandLineOption formatOption(
@@ -77,6 +76,11 @@ void exmpl_CLI(QApplication &app) {
     parser.addOption(formatOption);
 
     parser.process(app);
+
+    if (parser.isSet("help")) {
+        parser.showHelp();
+        return;
+    }
 
     QString path = parser.value(pathOption);
     QString comPort = parser.value(comOption);
@@ -86,8 +90,8 @@ void exmpl_CLI(QApplication &app) {
 
     qDebug() << "Path:" << path;
     qDebug() << "COM Port:" << comPort;
-    qDebug() << "Log File:" << logFile;
-    qDebug() << "Format:" << format;
+    qDebug() << "Path to output file:" << logFile;
+    qDebug() << "Format to save gps data:" << format;
 
     // Проверка формата без учёта регистра
     if (format == "CSV") {
@@ -102,8 +106,9 @@ void exmpl_CLI(QApplication &app) {
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    app.setApplicationVersion("0.0.1");
 
-    GPS_MODULE_VARIANTS example_num = GPS_MODULE_VARIANTS::GPS_MODULE_WIDGET;
+    GPS_MODULE_VARIANTS example_num = GPS_MODULE_VARIANTS::GPS_MODULE_CLI;
 
     switch (example_num) {
         case GPS_MODULE_VARIANTS::GPS_MODULE_CLI:
