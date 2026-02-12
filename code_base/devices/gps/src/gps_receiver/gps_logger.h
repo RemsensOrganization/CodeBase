@@ -9,7 +9,7 @@ extern const char kGpsFileLogName[];
 
 void saveGpsDataToFile(const GpsData &data, const QString &filePath);
 
-void saveGpsDataToLogFile(const GpsData &data);
+void saveGpsDataToFile(const GpsData &data);
 
 }  // namespace logger
 

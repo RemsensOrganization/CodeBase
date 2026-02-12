@@ -11,7 +11,7 @@ void gps_logger_UnitTests ::gps_logger_save_to_file_Test() {
     data.longitude = 27.6;
     data.isGpsDataValid = true;
     for (int i = 0; i < 5; ++i) {
-        logger::saveGpsDataToLogFile(data);
+        logger::saveGpsDataToFile(data);
     }
 }
 

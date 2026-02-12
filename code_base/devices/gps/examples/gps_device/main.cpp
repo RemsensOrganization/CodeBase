@@ -3,8 +3,8 @@
 #include "gps_device.h"
 
 void exmpl_without_widget() {
-    qRegisterMetaType<GpsData>("GpsData");
-    GPSDevice *gps = new GPSDevice;  // 1. создаем объект GPSDevice
+    // 1. создаем объект GPSDevice
+    GPSDevice *gps = new GPSDevice;
 
     // 2. Подключаем сигналы к логике пользователя данной библиотеки
     QObject::connect(gps, &GPSDevice::gpsDataUpdated, [](const GpsData &data) {
@@ -15,9 +15,11 @@ void exmpl_without_widget() {
                          qDebug() << "----user logic---- Status:" << status;
                      });
 
+    // 3. Запускаем с автодетектом порта на котором висит GPS или вручную
+    // указываем имя порта: gps->start("COM5");
+    gps->start();
+
     //  GPSDevice можно останавливать и заново запускать при необходиомсти
-    gps->start();  // 3. Запускаем с автодетектом порта на котором висит GPS или
-                   // вручную указываем номер
     gps->stop();
     gps->start();
     gps->stop();

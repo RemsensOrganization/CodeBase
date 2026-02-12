@@ -11,6 +11,7 @@ GpsWidget *GPSDevice::createWidget(QWidget *parent) {
 }
 
 GPSDevice::GPSDevice(QObject *parent) : QObject(parent) {
+    qRegisterMetaType<GpsData>("GpsData");
     m_gps_receiver = new GPSReceiver;
     m_gps_parser = new GPSParser;
 
@@ -56,6 +57,11 @@ void GPSDevice::stop() {
     }
     m_isRunning = false;
 }
+
+void GPSDevice::writeParcedToTextFile(bool isWriteBadData,
+                                      const QString &fileFullPath) {}
+
+void GPSDevice::writeAllToBinFile(const QString &fileFullPath) {}
 
 void GPSDevice::setupBeforeStart() {
     if (m_isRunning) {

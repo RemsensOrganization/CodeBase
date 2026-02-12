@@ -9,12 +9,30 @@ namespace logger {
 
 const char kGpsFileLogName[] = "/gps.log";
 
-void saveGpsDataToFile(const GpsData& data, const QString& filePath) {
+enum class saveFormat { styled, csv, jsonCompact, jsonIndented };
+
+void saveGpsDataToFile(const GpsData& data, saveFormat format,
+                       const QString& filePath) {
     if (data.isGpsDataValid) {
         QFile file(filePath);
         if (file.open(QIODevice::Append | QIODevice::Text)) {
             QTextStream out(&file);
-            out << gps::toCsvString(data);
+            switch (format) {
+                case saveFormat::styled:
+                    out << gps::toStyledString(data);
+                    break;
+                case saveFormat::csv:
+                    out << gps::toCsvString(data);
+                    break;
+                case saveFormat::jsonCompact:
+                    out << gps::toCompactJson(data);
+                    break;
+                case saveFormat::jsonIndented:
+                    out << gps::toIndentedJson(data);
+                    break;
+                default:
+                    break;
+            }
             out.flush();
         } else {
             qDebug() << file.errorString();
@@ -22,10 +40,11 @@ void saveGpsDataToFile(const GpsData& data, const QString& filePath) {
     }
 }
 
-void saveGpsDataToLogFile(const GpsData& data) {
+void saveGpsDataToFile(const GpsData& data, saveFormat format) {
     if (data.isGpsDataValid) {
         saveGpsDataToFile(
-            data, QCoreApplication::applicationDirPath() + kGpsFileLogName);
+            data, format,
+            QCoreApplication::applicationDirPath() + kGpsFileLogName);
     }
 }
 

@@ -11,6 +11,11 @@
 #include "gps_widget.h"
 #include "qobjectdefs.h"
 
+namespace {
+constexpr char kBinFileName[] = "gpsLog.bin";
+constexpr char kTextFileName[] = "gpsLog.txt";
+}  // namespace
+
 class GPSDevice : public QObject {
     Q_OBJECT
 public:
@@ -26,6 +31,10 @@ public slots:
     void start(const QString &portName);  // default baudRate
     void start(const QString &portName, QSerialPort::BaudRate baudRate);
     void stop();  // вызов есть в  деструкторе класса
+
+    void writeParcedToTextFile(bool isWriteBadData,
+                               const QString &fileFullPath = kTextFileName);
+    void writeAllToBinFile(const QString &fileFullPath = kBinFileName);
 
 signals:
     void gpsStatusChanged(const QString &msg);
