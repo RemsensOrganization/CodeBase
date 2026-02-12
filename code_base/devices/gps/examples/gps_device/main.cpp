@@ -1,13 +1,6 @@
 #include <QApplication>
-#include <QDebug>
-#include <QObject>
 
-#include "QtConcurrent/QtConcurrent"  // IWYU pragma: keep
-#include "gps_data.h"
 #include "gps_device.h"
-#include "gps_parser.h"
-#include "gps_receiver.h"
-#include "qobjectdefs.h"
 
 void exmpl_without_widget() {
     qRegisterMetaType<GpsData>("GpsData");
