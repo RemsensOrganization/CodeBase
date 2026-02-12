@@ -3,21 +3,17 @@
 #include "QVBoxLayout"
 #include "gps_data.h"
 
-namespace {
-constexpr char NA[] = "NA";
-}
-
 GpsWidget::GpsWidget(QWidget *parent) : QWidget(parent) {
     layout = new QFormLayout(this);
-    latitudeLabel = new QLabel(NA);
-    longitudeLabel = new QLabel(NA);
-    altitudeLabel = new QLabel(NA);
-    speedLabel = new QLabel(NA);
-    courseLabel = new QLabel(NA);
-    dateLabel = new QLabel(NA);
-    timeUtcLabel = new QLabel(NA);
-    satellitesLabel = new QLabel(NA);
-    gpsStatusLabel = new QLabel(NA);
+    latitudeLabel = new QLabel(kNA);
+    longitudeLabel = new QLabel(kNA);
+    altitudeLabel = new QLabel(kNA);
+    speedLabel = new QLabel(kNA);
+    courseLabel = new QLabel(kNA);
+    dateLabel = new QLabel(kNA);
+    timeUtcLabel = new QLabel(kNA);
+    satellitesLabel = new QLabel(kNA);
+    gpsStatusLabel = new QLabel(kNA);
 
     layout->addRow("Latitude:", latitudeLabel);
     layout->addRow("Longitude:", longitudeLabel);

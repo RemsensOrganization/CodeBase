@@ -5,6 +5,9 @@
 
 #include "qjsondocument.h"
 
+extern const char kNA[] = "NA";
+extern const char kNAN[] = "nan";
+
 namespace {
 
 QJsonDocument GpsDataToJson(const GpsData& data) {

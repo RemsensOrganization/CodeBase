@@ -5,21 +5,36 @@
 #include <QMetaType>  // IWYU pragma: keep
 #include <QString>
 #include <QStringList>
+#include <climits>
+
+extern const char kNA[];
+extern const char kNAN[];
 
 struct GpsData {
-    double latitude = 0.0;
-    double longitude = 0.0;
-    double altitude = 0.0;
-    double speedKmh = 0.0;
-    double course = 0.0;
-    QString date;
-    QString timeUtc;
-    int satellites = 0;
+    double latitude = NAN;
+    double longitude = NAN;
+    double altitude = NAN;
+    double speedKmh = NAN;
+    double course = NAN;
+    QString date = kNAN;
+    QString timeUtc = kNAN;
+    int satellites = NAN;
     bool isGpsDataValid = false;
     // parsing errors
     QStringList errors;
 
-    void clearErrors() { errors.clear(); }
+    void clearGpsData() {
+        latitude = NAN;
+        longitude = NAN;
+        altitude = NAN;
+        speedKmh = NAN;
+        course = NAN;
+        date = kNAN;
+        timeUtc = kNAN;
+        satellites = NAN;
+        isGpsDataValid = false;
+        errors.clear();
+    };
 };
 Q_DECLARE_METATYPE(GpsData)
 
