@@ -4,8 +4,7 @@ CONFIG += ordered
 
 include(src/gps.pri)
 
-SUBDIRS += examples/controller/controller.pro\
-           examples/minimalistic\
+SUBDIRS += examples/gps_device/gps_device_example.pro\
 
 SUBDIRS += tests/tests.pro
 

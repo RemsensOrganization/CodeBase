@@ -11,9 +11,9 @@
 
 void exmpl_without_widget() {
     qRegisterMetaType<GpsData>("GpsData");
-    GPSDevice *gps = new GPSDevice;
+    GPSDevice *gps = new GPSDevice;  // 1. создаем объект GPSDevice
 
-    // Подключаем сигналы к логике пользователя данной библиотеки
+    // 2. Подключаем сигналы к логике пользователя данной библиотеки
     QObject::connect(gps, &GPSDevice::gpsDataUpdated, [](const GpsData &data) {
         qDebug() << "----user logic---- широта: " << data.latitude;
     });
@@ -23,14 +23,15 @@ void exmpl_without_widget() {
                      });
 
     //  GPSDevice можно останавливать и заново запускать при необходиомсти
-    gps->start();
+    gps->start();  // 3. Запускаем с автодетектом порта на котором висит GPS или
+                   // вручную указываем номер
     gps->stop();
     gps->start();
     gps->stop();
     gps->start();
     gps->stop();
 
-    // запускаем разные  функции gps по таймеру
+    // запускаем разные  функции gps по таймеру для проверки
     QTimer::singleShot(3000, gps, &GPSDevice::stop);
     QTimer::singleShot(5000, gps, SLOT(start()));
     QTimer::singleShot(7000, [gps]() { delete gps; });
@@ -39,8 +40,8 @@ void exmpl_without_widget() {
 void exmpl_with_widget() {
     qRegisterMetaType<GpsData>("GpsData");
     GPSDevice *gps = new GPSDevice;
-    GpsWidget *widget = gps->createWidget();  // создали виджет и теперь можн
-                                              // оиспользовать его в своем GUI
+    GpsWidget *widget = gps->createWidget();  // создали виджет и теперь можно
+                                              // использовать его в своем GUI
     widget->show();
 
     QTimer::singleShot(3000, gps, &GPSDevice::stop);
@@ -51,9 +52,17 @@ void exmpl_with_widget() {
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    exmpl_with_widget();
+    int example_num = 1;  // выбери номер примера
 
-    // exmpl_without_widget();
+    switch (example_num) {
+        case 1:
+            exmpl_with_widget();
+            break;
+        case 2:
+            exmpl_without_widget();
+        default:
+            break;
+    }
 
     return app.exec();
 }
