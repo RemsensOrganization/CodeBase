@@ -1,5 +1,5 @@
-#ifndef DEVICES_GPS_SRC_DATA_GPS_DATA_H_
-#define DEVICES_GPS_SRC_DATA_GPS_DATA_H_
+#ifndef DEVICES_GPS_SRC_GPS_DATA_GPS_DATA_H_
+#define DEVICES_GPS_SRC_GPS_DATA_GPS_DATA_H_
 
 #include <QJsonObject>
 #include <QMetaType>  // IWYU pragma: keep
@@ -35,4 +35,4 @@ QString toIndentedJson(const GpsData& data);
 
 }  // namespace gps
 
-#endif  // DEVICES_GPS_SRC_DATA_GPS_DATA_H_
+#endif  // DEVICES_GPS_SRC_GPS_DATA_GPS_DATA_H_

@@ -1,5 +1,5 @@
-#ifndef GPSDEVICE_H
-#define GPSDEVICE_H
+#ifndef DEVICES_GPS_SRC_SOLUTIONS_GPS_DEVICE_GPS_DEVICE_H_
+#define DEVICES_GPS_SRC_SOLUTIONS_GPS_DEVICE_GPS_DEVICE_H_
 
 #include <QObject>
 
@@ -21,7 +21,8 @@ public:
     ~GPSDevice();
 
 public slots:
-    void start();                         // автодетект порта
+    void start();  // автодетект порта (поиск gps приёмников из файла
+                   // gps_devices.json)
     void start(const QString &portName);  // default baudRate
     void start(const QString &portName, QSerialPort::BaudRate baudRate);
     void stop();  // вызов есть в  деструкторе класса
@@ -40,4 +41,4 @@ private:
     QFuture<void> m_future;
 };
 
-#endif  // GPSDEVICE_H
+#endif  // DEVICES_GPS_SRC_SOLUTIONS_GPS_DEVICE_GPS_DEVICE_H_

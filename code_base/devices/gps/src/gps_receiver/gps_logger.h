@@ -1,5 +1,5 @@
-#ifndef DEVICES_GPS_SRC_PORT_READER_GPS_LOGGER_H_
-#define DEVICES_GPS_SRC_PORT_READER_GPS_LOGGER_H_
+#ifndef DEVICES_GPS_SRC_GPS_RECEIVER_GPS_LOGGER_H_
+#define DEVICES_GPS_SRC_GPS_RECEIVER_GPS_LOGGER_H_
 
 #include "gps_data.h"
 
@@ -13,4 +13,4 @@ void saveGpsDataToLogFile(const GpsData &data);
 
 }  // namespace logger
 
-#endif  // DEVICES_GPS_SRC_PORT_READER_GPS_LOGGER_H_
+#endif  // DEVICES_GPS_SRC_GPS_RECEIVER_GPS_LOGGER_H_
