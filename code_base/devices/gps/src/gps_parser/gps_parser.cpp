@@ -147,9 +147,10 @@ bool isCourseValid(const double course, QStringList& errors) {
     return result;
 }
 
-bool isDateValid(const QString& date, QStringList& errors) {
+bool isDateValid(QString& date, QStringList& errors) {
     if (date.size() != 6 || !date.toUInt()) {
         errors.append(QString(kGpsMsgDateIsInvalid) + QString("(bad format)"));
+        date = QString(kNA);
         return false;
     }
 
@@ -160,6 +161,7 @@ bool isDateValid(const QString& date, QStringList& errors) {
 
     if (!okDay || !okMonth || !okYear) {
         errors.append(QString(kGpsMsgDateIsInvalid) + QString("(parse error)"));
+        date = QString(kNA);
         return false;
     }
 
@@ -169,6 +171,7 @@ bool isDateValid(const QString& date, QStringList& errors) {
     if (!qdate.isValid()) {
         errors.append(QString(kGpsMsgDateIsInvalid) +
                       QString("(invalid calendar date)"));
+        date = QString(kNA);
         return false;
     }
 
