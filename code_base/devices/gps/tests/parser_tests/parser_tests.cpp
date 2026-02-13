@@ -92,19 +92,12 @@ void TestsParser::test_unreal_values() {
     qDebug() << "unreal satellites: " << gpsData.satellites;
     QCOMPARE(gpsData.satellites, 99);
     qDebug() << gpsData.altitude;
-    Q_UNUSED(gpsData.altitude;)
     qDebug() << gpsData.latitude;
-    Q_UNUSED(gpsData.latitude;)
     qDebug() << gpsData.longitude;
-    Q_UNUSED(gpsData.longitude;)
     qDebug() << gpsData.speedKmh;
-    Q_UNUSED(gpsData.speedKmh;)
     qDebug() << gpsData.course;
-    Q_UNUSED(gpsData.course;)
     qDebug() << gpsData.timeUtc;
-    Q_UNUSED(gpsData.timeUtc;)
     qDebug() << gpsData.date;
-    Q_UNUSED(gpsData.date;)
     showParsingErrors(parser.data.errors);
 }
 
