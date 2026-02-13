@@ -181,14 +181,19 @@ bool isDateValid(QString& date, QStringList& errors) {
 }  // end namespace
 
 void GPSParser::parseLine(const QString line) {
+    static int counter = 0;
     if (line.isEmpty()) return;
     static bool isGGA_Ready = false;
     static bool isRMC_Ready = false;
-
-    if (line.startsWith("$GPGGA")) {
-        parseGGA(line, isGGA_Ready);
-    } else if (line.startsWith("$GPRMC")) {
+    counter++;
+    if (line.startsWith("$GPRMC")) {
         parseRMC(line, isRMC_Ready);
+        qDebug()
+            << QString("%1 rmc is ready = %2").arg(counter).arg(isRMC_Ready);
+    } else if (line.startsWith("$GPGGA")) {
+        parseGGA(line, isGGA_Ready);
+        qDebug()
+            << QString("%1 gga is ready = %2").arg(counter).arg(isGGA_Ready);
     }
     if (isGGA_Ready && isRMC_Ready) {
         emit gpsUpdated(data, QPrivateSignal{});
