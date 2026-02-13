@@ -186,15 +186,24 @@ void GPSParser::parseLine(const QString line) {
     static bool isGGA_Ready = false;
     static bool isRMC_Ready = false;
     counter++;
+    bool emitNow = false;
+
     if (line.startsWith("$GPRMC")) {
         parseRMC(line, isRMC_Ready);
         qDebug()
             << QString("%1 rmc is ready = %2").arg(counter).arg(isRMC_Ready);
+        if (isRMC_Ready) {
+            emitNow = true;
+        }
     } else if (line.startsWith("$GPGGA")) {
         parseGGA(line, isGGA_Ready);
         qDebug()
             << QString("%1 gga is ready = %2").arg(counter).arg(isGGA_Ready);
+        if (isGGA_Ready) {
+            emitNow = true;
+        }
     }
+
     if (isGGA_Ready && isRMC_Ready) {
         emit gpsUpdated(data, QPrivateSignal{});
         if (!data.errors.empty()) {
@@ -205,6 +214,18 @@ void GPSParser::parseLine(const QString line) {
         isGGA_Ready = false;
         isRMC_Ready = false;
     }
+    /*
+    if (emitNow) {
+        emit gpsUpdated(data, QPrivateSignal{});
+        if (!data.errors.empty()) {
+            qWarning() << data.errors;
+        }
+        // ВАЖНО: НЕ делаем clearGpsData здесь, иначе потеряем накопленное
+        //(можно только ошибки почистить)
+        // data.clearGpsData();  // убрать
+        isGGA_Ready = false;
+        isRMC_Ready = false;
+    }*/
 }
 
 void GPSParser::parseGGA(const QString& line, bool& isValid) {

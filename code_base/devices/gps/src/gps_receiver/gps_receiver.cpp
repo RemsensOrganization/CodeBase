@@ -13,10 +13,10 @@ namespace msgs {
 const char kGpsMsgAutoPortSelected[] =
     "GPS module selected COM port automatically";
 const char kGpsMsgFailedToOpenPort[] = "GPS module is failed to open COM port";
-const char kGpsMsgIsConnected[] = "GPS module connected to %1 successfully.";
+const char kGpsMsgIsConnected[] = "connected";
+const char kGpsMsgIsWaitingForDevice[] = "wait...";
 const char kGpsMsgIsNotAvailabel[] = "Gps device is not available";
-const char kGpsMsgIsWaitingForDevice[] =
-    "GPS module is waiting for gps device...";
+
 const char kGpsMsgNoDataOrPortClosed[] =
     "GPS module has recieved empty data or COM port is closed."
     "Reconnecting...";
