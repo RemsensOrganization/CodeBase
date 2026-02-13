@@ -13,8 +13,8 @@
 #include "qobjectdefs.h"
 
 namespace {
-constexpr char kBinFileName[] = "gpsLog.bin";
-constexpr char kTextFileName[] = "gpsLog.txt";
+constexpr char kBinFileName[] = "gpsAll.txt";
+constexpr char kTextFileName[] = "gpsDataLog.txt";
 }  // namespace
 
 class GPSDevice : public QObject {
@@ -35,7 +35,6 @@ public slots:
 
     void writeParcedToTextFile(logger::saveFormat format,
                                const QString &fileFullPath = kTextFileName);
-    void writeParcedToTextFile(logger::saveFormat format);
     void writeAllToBinFile(const QString &fileFullPath = kBinFileName);
 
 signals:
@@ -43,7 +42,7 @@ signals:
     void gpsDataUpdated(const GpsData &data);
 
 private:
-    void setupBeforeStart();
+    bool setupBeforeStart();
 
 private:
     bool m_isRunning = false;

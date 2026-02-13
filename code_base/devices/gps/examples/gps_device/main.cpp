@@ -45,10 +45,15 @@ void exmpl_with_widget() {
     GpsWidget *widget = gps->createWidget();  // создали виджет и теперь можно
                                               // использовать его в своем GUI
     widget->show();
+    gps->start();
+    gps->writeAllToBinFile();
+    gps->writeParcedToTextFile(logger::saveFormat::jsonIndented);
 
-    QTimer::singleShot(3000, gps, &GPSDevice::stop);
-    QTimer::singleShot(5000, gps, SLOT(start()));
-    QTimer::singleShot(7000, [gps]() { delete gps; });
+    widget->setAttribute(Qt::WA_DeleteOnClose,
+                         true);  // Авто delete после close
+
+    // QObject::connect(widget, &QObject::destroyed, [&]() { gps->stop(); });
+    QTimer::singleShot(7000, [gps]() { gps->stop(); });
 }
 
 void exmpl_CLI(QApplication &app) {
