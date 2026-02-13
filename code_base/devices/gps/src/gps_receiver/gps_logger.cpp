@@ -48,4 +48,20 @@ void saveGpsDataToFile(const GpsData& data, saveFormat format) {
     }
 }
 
+void saveGpsLineToFile(const QString& line, const QString& filePath) {
+    QFile file(filePath);
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << line;
+        out.flush();
+    } else {
+        qDebug() << file.errorString();
+    }
+}
+
+void saveGpsLineToFile(const QString& line) {
+    saveGpsLineToFile(line,
+                      QCoreApplication::applicationDirPath() + kGpsFileLogName);
+}
+
 }  // namespace logger

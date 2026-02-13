@@ -34,7 +34,7 @@ public slots:
     void stop();  // вызов есть в  деструкторе класса
 
     void writeParcedToTextFile(logger::saveFormat format,
-                               const QString &fileFullPath);
+                               const QString &fileFullPath = kTextFileName);
     void writeParcedToTextFile(logger::saveFormat format);
     void writeAllToBinFile(const QString &fileFullPath = kBinFileName);
 
@@ -47,6 +47,8 @@ private:
 
 private:
     bool m_isRunning = false;
+    bool m_isSaveGpsDataToFile_connected = false;
+    bool m_isSaveGpsLineToFile_connected = false;
     GPSReceiver *m_gps_receiver;
     GPSParser *m_gps_parser;
     QFuture<void> m_future;
