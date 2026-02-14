@@ -2,7 +2,6 @@ QT += core gui widgets serialport concurrent
 
 include(../../gps.pri)
 
-# Исходники
 SOURCES += \
     $$PWD/gps_device.cpp \
     $$PWD/gps_widget.cpp

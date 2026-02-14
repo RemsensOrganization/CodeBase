@@ -1,4 +1,5 @@
 include(gps_data/gps_data.pri)
+include(gps_device_status/gps_device_status.pri)
 include(gps_parser/gps_parser.pri)
 include(gps_port_autodetector/gps_port_autodetector.pri)
 include(gps_data_base/gps_data_base.pri)
