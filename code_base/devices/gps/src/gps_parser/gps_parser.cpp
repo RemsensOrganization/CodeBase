@@ -16,6 +16,7 @@ constexpr int kGgaValidGpsFlagPartIndex = 6;
 constexpr int kGgaSatellitesPartIndex = 7;
 constexpr int kGgaAltitudeFieldPartIndex = 9;
 
+constexpr int kRmcTimeUtcPartIndex = 1;
 constexpr int kRmcStatusPartIndex = 2;
 constexpr int kRmcLatitudeFieldPartIndex = 3;
 constexpr int kRmcLatitudeFieldPartDirection = 4;
@@ -178,10 +179,39 @@ bool isDateValid(QString& date, QStringList& errors) {
     return true;
 }
 
+bool isTimeValid(const QString& timeStr, QStringList& errors) {
+    if (timeStr.isEmpty()) {
+        errors.append("Time field is empty");
+        return false;
+    }
+
+    bool ok;
+    int hours = timeStr.midRef(0, 2).toInt(&ok);
+    if (!ok || hours < 0 || hours > 23) {
+        errors.append("Invalid hours in time field");
+        return false;
+    }
+
+    int minutes = timeStr.midRef(2, 2).toInt(&ok);
+    if (!ok || minutes < 0 || minutes > 59) {
+        errors.append("Invalid minutes in time field");
+        return false;
+    }
+
+    double seconds = timeStr.midRef(4).toDouble(&ok);
+    if (!ok || seconds < 0.0 || seconds >= 60.0) {
+        errors.append("Invalid seconds in time field");
+        return false;
+    }
+
+    return true;
+}
+
 }  // end namespace
 
 void GPSParser::parseLine(const QString line) {
     static int counter = 0;
+    static QString rmcTime = "";
     if (line.isEmpty()) return;
     static bool isGGA_Ready = false;
     static bool isRMC_Ready = false;
@@ -189,7 +219,7 @@ void GPSParser::parseLine(const QString line) {
     bool emitNow = false;
 
     if (line.startsWith("$GPRMC")) {
-        parseRMC(line, isRMC_Ready);
+        parseRMC(line, rmcTime, isRMC_Ready);
         qDebug()
             << QString("%1 rmc is ready = %2").arg(counter).arg(isRMC_Ready);
         if (isRMC_Ready) {
@@ -242,6 +272,10 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
     }
 
     data.timeUtc = parts[kGgaTimeUtcPartIndex];
+    isOk = isTimeValid(data.timeUtc, data.errors);
+    if (!isOk) {
+        data.timeUtc = kNAN;
+    }
 
     data.satellites = parts[kGgaSatellitesPartIndex].toInt(&isOk);
     isSatellitesNumberValid(data.satellites, data.errors);
@@ -254,11 +288,15 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
     isValid = data.isGpsDataValid;
 }
 
-void GPSParser::parseRMC(const QString& line, bool& isValid) {
+void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
     QStringList parts = line.split(",");
     if (!isRmcNumberValid(parts.size(), data.errors)) {
         isValid = false;
         return;
+    }
+    rmcTime = parts[kRmcTimeUtcPartIndex];
+    if (!isTimeValid(rmcTime, data.errors)) {
+        rmcTime = kNAN;
     }
 
     data.latitude =

@@ -17,7 +17,7 @@ signals:
 
 private:
     void parseGGA(const QString &line, bool &isValid);
-    void parseRMC(const QString &line, bool &isValid);
+    void parseRMC(const QString &line, QString &rmcTime, bool &isValid);
 
     GpsData data;
 };
