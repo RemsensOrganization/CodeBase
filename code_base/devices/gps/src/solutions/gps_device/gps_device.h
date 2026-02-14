@@ -5,9 +5,9 @@
 
 #include "QtConcurrent/QtConcurrent"  // IWYU pragma: keep
 #include "gps_data.h"
+#include "gps_device_status.h"
 #include "gps_logger.h"
 #include "gps_parser.h"
-#include "gps_port_autodetector.h"
 #include "gps_receiver.h"
 #include "gps_widget.h"
 #include "qobjectdefs.h"
@@ -43,14 +43,15 @@ signals:
 
 private:
     bool setupBeforeStart();
-
-private:
     bool m_isRunning = false;
     bool m_isSaveGpsDataToFile_connected = false;
     bool m_isSaveGpsLineToFile_connected = false;
     GPSReceiver *m_gps_receiver;
     GPSParser *m_gps_parser;
     QFuture<void> m_future;
+
+private slots:
+    void gpsStatusUpdated(GpsStatus status);
 };
 
 #endif  // DEVICES_GPS_SRC_SOLUTIONS_GPS_DEVICE_GPS_DEVICE_H_

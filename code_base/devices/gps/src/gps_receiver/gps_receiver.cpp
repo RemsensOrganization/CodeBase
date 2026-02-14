@@ -13,13 +13,9 @@ namespace msgs {
 const char kGpsMsgAutoPortSelected[] =
     "GPS module selected COM port automatically";
 const char kGpsMsgFailedToOpenPort[] = "GPS module is failed to open COM port";
-const char kGpsMsgIsConnected[] = "connected";
-const char kGpsMsgIsWaitingForDevice[] = "wait...";
+const char kGpsMsgModuleConnected[] = "GPS module is connected";
+const char kGpsMsgIsWaitingForDevice[] = "GPS module is trying to connect";
 const char kGpsMsgIsNotAvailabel[] = "Gps device is not available";
-
-const char kGpsMsgNoDataOrPortClosed[] =
-    "GPS module has recieved empty data or COM port is closed."
-    "Reconnecting...";
 const char kGpsMsgIsReconnected[] = "GPS module reconnected to";
 const char kGpsMsgLoopFinished[] = "GPS module is terminated";
 
@@ -56,34 +52,31 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
         auto gpsPorts = detector.getGpsPorts();
         if (!gpsPorts.isEmpty()) {
             targetPort = gpsPorts.first().portName();
-            emit gpsStatusChanged(
-                QString(msgs::kGpsMsgAutoPortSelected) + targetPort,
-                QPrivateSignal{});
+            qDebug() << QString(msgs::kGpsMsgAutoPortSelected) + targetPort;
         } else {
-            emit gpsStatusChanged(QString(msgs::kGpsMsgIsNotAvailabel),
-                                  QPrivateSignal{});
+            emit gpsStatusChanged(GpsStatus::OFFLINE, QPrivateSignal{});
+            qWarning() << QString(msgs::kGpsMsgIsNotAvailabel);
             return;
         }
     }
-    emit gpsStatusChanged("Target port: " + targetPort, QPrivateSignal{});
     gps.setPortName(targetPort);
 
     if (!gps.open(QIODevice::ReadOnly)) {
         qWarning() << QString(msgs::kGpsMsgFailedToOpenPort);
     } else {
-        emit gpsStatusChanged(QString(msgs::kGpsMsgIsConnected).arg(targetPort),
-                              QPrivateSignal{});
+        qDebug() << QString(msgs::kGpsMsgModuleConnected);
     }
 
     while (isRun) {
         if (gps.isOpen() && gps.waitForReadyRead(GPS_READ_TIMEOUT_MS)) {
+            emit gpsStatusChanged(GpsStatus::IDLE, QPrivateSignal{});
             QByteArray chunk = gps.readAll();
             if (!chunk.isEmpty()) {
+                emit gpsStatusChanged(GpsStatus::ACTIVE, QPrivateSignal{});
                 emit gpsDataReceived(chunk, QPrivateSignal{});
             }
         } else {
-            emit gpsStatusChanged(QString(msgs::kGpsMsgNoDataOrPortClosed),
-                                  QPrivateSignal{});
+            emit gpsStatusChanged(GpsStatus::OFFLINE, QPrivateSignal{});
             gps.close();
 
             bool reconnected = false;
@@ -94,17 +87,14 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
                     if (portInfo.portName() == targetPort) {
                         gps.setPortName(portInfo.portName());
                         if (gps.open(QIODevice::ReadOnly)) {
-                            emit gpsStatusChanged(msgs::kGpsMsgIsConnected,
-                                                  QPrivateSignal{});
                             reconnected = true;
                             break;
                         }
                     }
                 }
                 if (!reconnected) {
-                    emit gpsStatusChanged(
-                        QString(msgs::kGpsMsgIsWaitingForDevice),
-                        QPrivateSignal{});
+                    qDebug() << QString(msgs::kGpsMsgIsWaitingForDevice);
+                    emit gpsStatusChanged(GpsStatus::OFFLINE, QPrivateSignal{});
                     QThread::msleep(TRY_TO_RECONNECT_INTERVAL_MS);
                 }
             }
@@ -112,6 +102,6 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
     }
 
     gps.close();
-    emit gpsStatusChanged(QString(msgs::kGpsMsgLoopFinished), QPrivateSignal{});
+    emit gpsStatusChanged(GpsStatus::OFFLINE, QPrivateSignal{});
     qDebug() << QString(msgs::kGpsMsgLoopFinished);
 }

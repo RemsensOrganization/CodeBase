@@ -12,6 +12,7 @@ GpsWidget *GPSDevice::createWidget(QWidget *parent) {
 
 GPSDevice::GPSDevice(QObject *parent) : QObject(parent) {
     qRegisterMetaType<GpsData>("GpsData");
+    qRegisterMetaType<GpsStatus>("GpsStatus");
     m_gps_receiver = new GPSReceiver;
     m_gps_parser = new GPSParser;
 
@@ -19,7 +20,7 @@ GPSDevice::GPSDevice(QObject *parent) : QObject(parent) {
             &GPSParser::parseLine);
 
     QObject::connect(m_gps_receiver, &GPSReceiver::gpsStatusChanged, this,
-                     &GPSDevice::gpsStatusChanged);
+                     &GPSDevice::gpsStatusUpdated);
 
     QObject::connect(m_gps_parser, &GPSParser::gpsUpdated, this,
                      &GPSDevice::gpsDataUpdated);
@@ -94,4 +95,20 @@ bool GPSDevice::setupBeforeStart() {
     m_isRunning = true;
     qDebug() << "GPS device receved request to be started";
     return true;
+}
+
+void GPSDevice::gpsStatusUpdated(GpsStatus status) {
+    emit gpsStatusChanged(toString(status));
+    switch (status) {
+        case GpsStatus::OFFLINE:  // нет связи с COM-портом
+            break;
+        case GpsStatus::IDLE:  // порт открыт, но данных нет
+            break;
+        case GpsStatus::ACTIVE:  // поток NMEA идёт
+            break;
+        case GpsStatus::SEARCHING:  // данные есть, но фиксации нет
+            break;
+        case GpsStatus::DATA_ERROR:  // ошибка данных
+            break;
+    }
 }

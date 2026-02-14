@@ -10,11 +10,7 @@ enum class GpsStatus {
     IDLE,       // порт открыт, но данных нет
     ACTIVE,     // поток NMEA идёт
     SEARCHING,  // данные есть, но фиксации нет
-    FIX2D,      // 2D фиксация
-    FIX3D,      // 3D фиксация
-    DGPS,       // дифференциальная фиксация
-    RTK,        // RTK фиксация
-    ERROR       // ошибка данных
+    DATA_ERROR  // ошибка данных
 };
 
 Q_DECLARE_METATYPE(GpsStatus)

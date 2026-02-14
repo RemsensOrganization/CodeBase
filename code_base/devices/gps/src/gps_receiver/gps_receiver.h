@@ -4,13 +4,14 @@
 #include <QObject>
 #include <QSerialPort>
 
+#include "gps_device_status.h"
+
 namespace msgs {
 
 extern const char kGpsAutoPortSelected[];
 extern const char kGpsMsgFailedToOpenPort[];
 extern const char kGpsMsgIsNotAvailabel[];
 extern const char kGpsMsgIsWaitingForDevice[];
-extern const char kGpsMsgNoDataOrPortClosed[];
 extern const char kGpsMsgIsReconnected[];
 extern const char kGpsMsgLoopFinished[];
 
@@ -33,7 +34,7 @@ public:
 
 signals:
     void gpsDataReceived(const QByteArray &data, QPrivateSignal);
-    void gpsStatusChanged(const QString &status, QPrivateSignal);
+    void gpsStatusChanged(GpsStatus, QPrivateSignal);
 
 private:
     void readLoop(const QString &portName, const int baudRate);

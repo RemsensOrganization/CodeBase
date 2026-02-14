@@ -1,5 +1,7 @@
 QT += serialport core
 
+include(../gps_device_status/gps_device_status.pri)
+
 PORT_READER_DIR = $$PWD
 
 INCLUDEPATH += $$PORT_READER_DIR
