@@ -16,12 +16,12 @@ constexpr int kGgaLatitudeFieldPartIndex = 2;
 constexpr int kGgaLatitudeFieldPartDirection = 3;
 constexpr int kGgaLongitudeFieldPartIndex = 4;
 constexpr int kGgaLongitudeFieldPartDirection = 5;
-constexpr int kGgaValidGpsFlagPartIndex = 6;
+constexpr int kGgaFixQualityPartIndex = 6;
 constexpr int kGgaSatellitesPartIndex = 7;
 constexpr int kGgaAltitudeFieldPartIndex = 9;
 
 constexpr int kRmcTimeUtcPartIndex = 1;
-constexpr int kRmcStatusPartIndex = 2;
+constexpr int kRmcStatusFixPartIndex = 2;
 constexpr int kRmcLatitudeFieldPartIndex = 3;
 constexpr int kRmcLatitudeFieldPartDirection = 4;
 constexpr int kRmcLongitudeFieldPartIndex = 5;
@@ -134,13 +134,13 @@ bool isRmcNumberValid(const int number, QStringList& errors) {
     return result;
 }
 
-bool isGpsFlagValid(const QString& flag, QStringList& errors) {
+bool isGgaFixQuality(const QString& flag, QStringList& errors) {
     bool result = flag != "0";
     if (!result) errors.append(QString(kGpsMsgGpsFlagIsInvalid));
     return result;
 };
 
-bool isRmcStatusValid(const QString& flag, QStringList& errors) {
+bool isRmcStatusQuality(const QString& flag, QStringList& errors) {
     bool result = (flag == "A");
     if (!result) errors.append(QString(kGpsMsgRmcFlagIsInvalid));
     return result;
@@ -292,7 +292,7 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
     }
 
     data.isGpsDataValid =
-        isGpsFlagValid(parts[kGgaValidGpsFlagPartIndex], data.errors);
+        isGgaFixQuality(parts[kGgaFixQualityPartIndex], data.errors);
     isValid = data.isGpsDataValid;
 }
 
@@ -340,7 +340,7 @@ void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
     data.date = parts[kRmcDatePartIndex];
     isDateValid(data.date, data.errors);
 
-    isValid = isRmcStatusValid(parts[kRmcStatusPartIndex], data.errors);
+    isValid = isRmcStatusQuality(parts[kRmcStatusFixPartIndex], data.errors);
 }
 
 bool GPSParser::isSameMoment(const QString& rmcTime, const QString& ggaTime) {
