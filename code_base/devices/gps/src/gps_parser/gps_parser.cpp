@@ -209,53 +209,43 @@ bool isTimeValid(const QString& timeStr, QStringList& errors) {
 
 }  // end namespace
 
+GPSParser::GPSParser(QObject* parent, EmitMode mode)
+    : QObject(parent), emitMode(mode) {}
+
 void GPSParser::parseLine(const QString line) {
-    static int counter = 0;
-    static QString rmcTime = "";
     if (line.isEmpty()) return;
+    static QString rmcTime = "";
     static bool isGGA_Ready = false;
     static bool isRMC_Ready = false;
-    counter++;
-    bool emitNow = false;
 
     if (line.startsWith("$GPRMC")) {
         parseRMC(line, rmcTime, isRMC_Ready);
-        qDebug()
-            << QString("%1 rmc is ready = %2").arg(counter).arg(isRMC_Ready);
-        if (isRMC_Ready) {
-            emitNow = true;
-        }
     } else if (line.startsWith("$GPGGA")) {
         parseGGA(line, isGGA_Ready);
-        qDebug()
-            << QString("%1 gga is ready = %2").arg(counter).arg(isGGA_Ready);
-        if (isGGA_Ready) {
-            emitNow = true;
-        }
     }
 
-    if (isGGA_Ready && isRMC_Ready) {
-        emit gpsUpdated(data, QPrivateSignal{});
-        if (!data.errors.empty()) {
-            qWarning() << data.errors;
-        }
-        data.clearGpsData();
-
-        isGGA_Ready = false;
-        isRMC_Ready = false;
+    bool shouldEmit = false;
+    switch (emitMode) {
+        case EmitMode::BothValid:
+            shouldEmit = (isGGA_Ready && isRMC_Ready &&
+                          isSameMoment(data.timeUtc, data.timeUtc));
+            break;
+        case EmitMode::AnyValid:
+            shouldEmit = (isGGA_Ready || isRMC_Ready);
+            break;
     }
-    /*
-    if (emitNow) {
-        emit gpsUpdated(data, QPrivateSignal{});
-        if (!data.errors.empty()) {
-            qWarning() << data.errors;
+
+    if (shouldEmit) {
+        if (isGGA_Ready && isRMC_Ready) {
+            emit gpsUpdated(data, QPrivateSignal{});
+            if (!data.errors.empty()) {
+                qWarning() << data.errors;
+            }
+            data.clearGpsData();
+            isGGA_Ready = false;
+            isRMC_Ready = false;
         }
-        // ВАЖНО: НЕ делаем clearGpsData здесь, иначе потеряем накопленное
-        //(можно только ошибки почистить)
-        // data.clearGpsData();  // убрать
-        isGGA_Ready = false;
-        isRMC_Ready = false;
-    }*/
+    }
 }
 
 void GPSParser::parseGGA(const QString& line, bool& isValid) {
@@ -327,4 +317,9 @@ void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
     isDateValid(data.date, data.errors);
 
     isValid = isRmcStatusValid(parts[kRmcStatusPartIndex], data.errors);
+}
+
+bool GPSParser::isSameMoment(const QString& rmcTime, const QString& ggaTime) {
+    if (rmcTime.isEmpty() || ggaTime.isEmpty()) return false;
+    return rmcTime.left(6) == ggaTime.left(6);
 }
