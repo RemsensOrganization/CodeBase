@@ -228,7 +228,7 @@ void GPSParser::parseLine(const QString line) {
     switch (emitMode) {
         case EmitMode::BothValid:
             shouldEmit = (isGGA_Ready && isRMC_Ready &&
-                          isSameMoment(data.timeUtc, data.timeUtc));
+                          isSameMoment(rmcTime, data.timeUtc));
             break;
         case EmitMode::AnyValid:
             shouldEmit = (isGGA_Ready || isRMC_Ready);
