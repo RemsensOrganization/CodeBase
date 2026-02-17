@@ -14,7 +14,7 @@ GPSDevice::GPSDevice(QObject *parent) : QObject(parent) {
     qRegisterMetaType<GpsData>("GpsData");
     qRegisterMetaType<GpsStatus>("GpsStatus");
     m_gps_receiver = new GPSReceiver;
-    m_gps_parser = new GPSParser;
+    m_gps_parser = new GPSParser();
 
     connect(m_gps_receiver, &GPSReceiver::gpsDataReceived, m_gps_parser,
             &GPSParser::parseLine);

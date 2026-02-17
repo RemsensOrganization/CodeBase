@@ -1,4 +1,4 @@
-TARGET = gps_device_example
+TARGET = gps_device_nogui_example
 
 TEMPLATE = app
 
