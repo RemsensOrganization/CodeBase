@@ -25,8 +25,12 @@ void GPSReceiver::start() { start("", QSerialPort::Baud9600); }
 
 void GPSReceiver::start(const QString &portName,
                         QSerialPort::BaudRate baudRate) {
-    if (isRun) return;
-    isRun = true;
+    bool expected = false;
+    // Если уже запущен — выходим
+    if (!isRun.compare_exchange_strong(expected, true)) {
+        return;
+    }
+
     readLoop(portName, baudRate);
 }
 
@@ -34,7 +38,7 @@ void GPSReceiver::start(const QString &portName) {
     start(portName, QSerialPort::Baud9600);
 }
 
-void GPSReceiver::stop() { isRun = false; }
+void GPSReceiver::stop() { isRun.store(false, std::memory_order_relaxed); }
 
 void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
     QSerialPort gps;
@@ -67,7 +71,7 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
         qDebug() << QString(msgs::kGpsMsgModuleConnected);
     }
 
-    while (isRun) {
+    while (isRun.load(std::memory_order_relaxed)) {
         if (gps.isOpen() && gps.waitForReadyRead(GPS_READ_TIMEOUT_MS)) {
             emit gpsStatusChanged(GpsStatus::IDLE, QPrivateSignal{});
             QByteArray chunk = gps.readAll();
@@ -80,7 +84,7 @@ void GPSReceiver::readLoop(const QString &portName, const int baudRate) {
             gps.close();
 
             bool reconnected = false;
-            while (isRun && !reconnected) {
+            while (isRun.load(std::memory_order_relaxed) && !reconnected) {
                 auto detectedPorts = QSerialPortInfo::availablePorts();
                 for (const QSerialPortInfo &portInfo :
                      qAsConst(detectedPorts)) {

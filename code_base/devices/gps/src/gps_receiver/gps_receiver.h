@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSerialPort>
+#include <atomic>
 
 #include "gps_device_status.h"
 
@@ -38,7 +39,7 @@ signals:
 
 private:
     void readLoop(const QString &portName, const int baudRate);
-    bool isRun = false;
+    std::atomic<bool> isRun{false};
 };
 
 #endif  // DEVICES_GPS_SRC_GPS_RECEIVER_GPS_RECEIVER_H_

@@ -34,41 +34,30 @@ GPSDevice::~GPSDevice() {
 }
 
 void GPSDevice::start() {
-    bool canBeStarted = setupBeforeStart();
-    if (canBeStarted) {
-        m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start);
-    }
+    if (!setupBeforeStart()) return;
+    m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start);
 }
 
 void GPSDevice::start(const QString &portName) {
-    bool canBeStarted = setupBeforeStart();
-    if (canBeStarted) {
-        m_future =
-            QtConcurrent::run(m_gps_receiver, &GPSReceiver::start, portName);
-    }
+    if (!setupBeforeStart()) return;
+    m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start, portName);
 }
 
 void GPSDevice::start(const QString &portName, QSerialPort::BaudRate baudRate) {
-    bool canBeStarted = setupBeforeStart();
-    if (canBeStarted) {
-        m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start,
-                                     portName, baudRate);
-    }
+    if (!setupBeforeStart()) return;
+    m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start, portName,
+                                 baudRate);
 }
 
 void GPSDevice::stop() {
-    if (!m_isRunning && !m_future.isRunning()) return;
+    if (!m_future.isRunning()) return;
     qDebug() << "GPS device receved request to be stopped";
-    if (m_future.isRunning()) {
-        m_gps_receiver->stop();
-        m_future.waitForFinished();
-    }
-    m_isRunning = false;
+    m_gps_receiver->stop();
+    m_future.waitForFinished();
 }
 
 void GPSDevice::writeParcedToTextFile(logger::saveFormat format,
                                       const QString &fileFullPath) {
-    // TODO отправить в другой поток
     m_isSaveGpsDataToFile_connected = true;
     QObject::connect(m_gps_parser, &GPSParser::gpsUpdated,
                      [format, fileFullPath](const GpsData &data) {
@@ -85,14 +74,10 @@ void GPSDevice::writeAllToBinFile(const QString &fileFullPath) {
 }
 
 bool GPSDevice::setupBeforeStart() {
-    if (m_isRunning) {
+    if (m_future.isRunning()) {
         qDebug() << "GPS device already running. Doing nothing";
         return false;
     }
-    if (m_future.isRunning()) {
-        stop();
-    }
-    m_isRunning = true;
     qDebug() << "GPS device receved request to be started";
     return true;
 }

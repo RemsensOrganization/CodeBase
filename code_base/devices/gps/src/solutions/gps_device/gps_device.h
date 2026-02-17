@@ -23,7 +23,7 @@ public:
     GpsWidget *createWidget(QWidget *parent = nullptr);
 
     explicit GPSDevice(QObject *parent = nullptr);
-    bool isRunning() const { return m_isRunning; };
+    bool isRunning() const { return m_future.isRunning(); };
     ~GPSDevice();
 
 public slots:
@@ -43,7 +43,6 @@ signals:
 
 private:
     bool setupBeforeStart();
-    bool m_isRunning = false;
     bool m_isSaveGpsDataToFile_connected = false;
     bool m_isSaveGpsLineToFile_connected = false;
     GPSReceiver *m_gps_receiver;
