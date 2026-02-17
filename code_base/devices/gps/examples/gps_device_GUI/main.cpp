@@ -11,8 +11,8 @@ void exmpl_with_widget() {
                                               // использовать его в своем GUI
     widget->show();
     gps->start();
-    gps->writeAllToBinFile();
-    gps->writeParcedToTextFile(logger::saveFormat::jsonIndented);
+    gps->writeOriginGpsDataToFile();
+    gps->writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented);
 
     widget->setAttribute(Qt::WA_DeleteOnClose,
                          true);  // Авто delete после close

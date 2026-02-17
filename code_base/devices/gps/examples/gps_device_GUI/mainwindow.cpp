@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
                                   // использовать его в своем GUI
     ui->verticalLayout->addWidget(widget);
     gps->start();
-    gps->writeAllToBinFile();
-    gps->writeParcedToTextFile(logger::saveFormat::jsonIndented);
+    gps->writeOriginGpsDataToFile();
+    gps->writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented);
 }
 
 MainWindow::~MainWindow() {

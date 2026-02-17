@@ -56,8 +56,8 @@ void GPSDevice::stop() {
     m_future.waitForFinished();
 }
 
-void GPSDevice::writeParcedToTextFile(logger::saveFormat format,
-                                      const QString &fileFullPath) {
+void GPSDevice::writeFormattedGpsDataToFile(logger::saveFormat format,
+                                            const QString &fileFullPath) {
     m_isSaveGpsDataToFile_connected = true;
     QObject::connect(m_gps_parser, &GPSParser::gpsUpdated,
                      [format, fileFullPath](const GpsData &data) {
@@ -65,7 +65,7 @@ void GPSDevice::writeParcedToTextFile(logger::saveFormat format,
                      });
 }
 
-void GPSDevice::writeAllToBinFile(const QString &fileFullPath) {
+void GPSDevice::writeOriginGpsDataToFile(const QString &fileFullPath) {
     m_isSaveGpsLineToFile_connected = true;
     QObject::connect(m_gps_receiver, &GPSReceiver::gpsDataReceived,
                      [fileFullPath](const QByteArray &data) {

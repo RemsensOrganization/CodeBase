@@ -13,8 +13,8 @@
 #include "qobjectdefs.h"
 
 namespace {
-constexpr char kBinFileName[] = "gpsAll.txt";
-constexpr char kTextFileName[] = "gpsDataLog.txt";
+constexpr char kOriginDataFileName[] = "gpsDataOrigin.txt";
+constexpr char kFormattedDataFileName[] = "gpsDataFormatted.txt";
 }  // namespace
 
 class GPSDevice : public QObject {
@@ -33,9 +33,11 @@ public slots:
     void start(const QString &portName, QSerialPort::BaudRate baudRate);
     void stop();  // вызов есть в  деструкторе класса
 
-    void writeParcedToTextFile(logger::saveFormat format,
-                               const QString &fileFullPath = kTextFileName);
-    void writeAllToBinFile(const QString &fileFullPath = kBinFileName);
+    void writeFormattedGpsDataToFile(
+        logger::saveFormat format,
+        const QString &fileFullPath = kFormattedDataFileName);
+    void writeOriginGpsDataToFile(
+        const QString &fileFullPath = kOriginDataFileName);
 
 signals:
     void gpsStatusChanged(const QString &msg);
