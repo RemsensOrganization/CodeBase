@@ -15,8 +15,7 @@ class GPSParser : public QObject {
     friend class TestsParser;
 
 public:
-    explicit GPSParser(QObject *parent = nullptr,
-                       EmitMode mode = EmitMode::BothValid);
+    explicit GPSParser(EmitMode mode = EmitMode::BothValid);
 
 public:
     void parseLine(const QString line);

@@ -6,7 +6,7 @@
 #include "qjsondocument.h"
 
 extern const char kNA[] = "NA";
-extern const char kNAN[] = "nan";
+extern const char kNAN[] = "null";
 
 namespace {
 

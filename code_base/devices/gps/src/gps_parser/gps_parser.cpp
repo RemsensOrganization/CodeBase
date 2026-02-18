@@ -213,8 +213,7 @@ bool isTimeValid(const QString& timeStr, QStringList& errors) {
 
 }  // end namespace
 
-GPSParser::GPSParser(QObject* parent, EmitMode mode)
-    : QObject(parent), emitMode(mode) {}
+GPSParser::GPSParser(EmitMode mode) : emitMode(mode) {}
 
 void GPSParser::parseLine(const QString line) {
     if (line.isEmpty()) return;
@@ -341,6 +340,9 @@ void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
     isDateValid(data.date, data.errors);
 
     isValid = isRmcStatusQuality(parts[kRmcStatusFixPartIndex], data.errors);
+    if (emitMode == EmitMode::AnyValid) {
+        data.isGpsDataValid = isValid;
+    }
 }
 
 bool GPSParser::isSameMoment(const QString& rmcTime, const QString& ggaTime) {

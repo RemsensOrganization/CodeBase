@@ -22,7 +22,8 @@ class GPSDevice : public QObject {
 public:
     GpsWidget *createWidget(QWidget *parent = nullptr);
 
-    explicit GPSDevice(QObject *parent = nullptr);
+    explicit GPSDevice(EmitMode mode = EmitMode::BothValid,
+                       QObject *parent = nullptr);
     bool isRunning() const { return m_future.isRunning(); };
     ~GPSDevice();
 

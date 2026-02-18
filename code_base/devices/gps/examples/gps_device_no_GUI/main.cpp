@@ -5,8 +5,10 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setApplicationVersion("0.0.1");
+
     // 1. создаем объект GPSDevice
-    GPSDevice *gps = new GPSDevice;
+    // EmitMode отвечает за механизм формирования данных
+    GPSDevice *gps = new GPSDevice(EmitMode::AnyValid);
 
     // 2. Подключаем сигналы к логике пользователя данной библиотеки
     QObject::connect(gps, &GPSDevice::gpsDataUpdated, [](const GpsData &data) {
@@ -14,7 +16,7 @@ int main(int argc, char *argv[]) {
     });
     QObject::connect(gps, &GPSDevice::gpsStatusChanged,
                      [](const QString &status) {
-                         qDebug() << "----user logic---- Status:" << status;
+                         // qDebug() << "----user logic---- Status:" << status;
                      });
 
     // 3. Запускаем с автодетектом порта на котором висит GPS или вручную
@@ -26,7 +28,7 @@ int main(int argc, char *argv[]) {
     gps->writeOriginGpsDataToFile();
     gps->writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented);
 
-    // удаляем и одновременно останавливаем через деструктор
+    // удаляем и одновременно останавливаем через деструктор.
     // если нужно просто остановить, то gps->stop();
     int secondsBeforeEnd = 10;
     QTimer::singleShot(secondsBeforeEnd * 1000, [gps]() { delete gps; });
