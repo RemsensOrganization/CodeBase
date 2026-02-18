@@ -12,11 +12,16 @@ constexpr double kMinLatitudeValue = -90;
 constexpr double kMaxLatitudeValue = 90;
 
 constexpr int kGgaTimeUtcPartIndex = 1;
-constexpr int kGgaValidGpsFlagPartIndex = 6;
+constexpr int kGgaLatitudeFieldPartIndex = 2;
+constexpr int kGgaLatitudeFieldPartDirection = 3;
+constexpr int kGgaLongitudeFieldPartIndex = 4;
+constexpr int kGgaLongitudeFieldPartDirection = 5;
+constexpr int kGgaFixQualityPartIndex = 6;
 constexpr int kGgaSatellitesPartIndex = 7;
 constexpr int kGgaAltitudeFieldPartIndex = 9;
 
-constexpr int kRmcStatusPartIndex = 2;
+constexpr int kRmcTimeUtcPartIndex = 1;
+constexpr int kRmcStatusFixPartIndex = 2;
 constexpr int kRmcLatitudeFieldPartIndex = 3;
 constexpr int kRmcLatitudeFieldPartDirection = 4;
 constexpr int kRmcLongitudeFieldPartIndex = 5;
@@ -65,9 +70,12 @@ double toDegrees(const QString& coord, const QString& dir,
     bool isOk;
     int deg = coord.leftRef(degLen).toInt(&isOk);
     double min = coord.midRef(degLen).toDouble(&isOk);
-    if (!isOk) errors.append(QString(kGpsMsgConvertToDegreesError));
     double decimal = deg + min / 60.0;
     if (dir == "S" || dir == "W") decimal *= -1;
+    if (!isOk) {
+        errors.append(QString(kGpsMsgConvertToDegreesError));
+        decimal = NAN;
+    }
     return decimal;
 }
 
@@ -126,13 +134,13 @@ bool isRmcNumberValid(const int number, QStringList& errors) {
     return result;
 }
 
-bool isGpsFlagValid(const QString& flag, QStringList& errors) {
+bool isGgaFixQuality(const QString& flag, QStringList& errors) {
     bool result = flag != "0";
     if (!result) errors.append(QString(kGpsMsgGpsFlagIsInvalid));
     return result;
 };
 
-bool isRmcStatusValid(const QString& flag, QStringList& errors) {
+bool isRmcStatusQuality(const QString& flag, QStringList& errors) {
     bool result = (flag == "A");
     if (!result) errors.append(QString(kGpsMsgRmcFlagIsInvalid));
     return result;
@@ -144,9 +152,10 @@ bool isCourseValid(const double course, QStringList& errors) {
     return result;
 }
 
-bool isDateValid(const QString& date, QStringList& errors) {
+bool isDateValid(QString& date, QStringList& errors) {
     if (date.size() != 6 || !date.toUInt()) {
         errors.append(QString(kGpsMsgDateIsInvalid) + QString("(bad format)"));
+        date = QString(kNA);
         return false;
     }
 
@@ -157,6 +166,7 @@ bool isDateValid(const QString& date, QStringList& errors) {
 
     if (!okDay || !okMonth || !okYear) {
         errors.append(QString(kGpsMsgDateIsInvalid) + QString("(parse error)"));
+        date = QString(kNA);
         return false;
     }
 
@@ -166,6 +176,35 @@ bool isDateValid(const QString& date, QStringList& errors) {
     if (!qdate.isValid()) {
         errors.append(QString(kGpsMsgDateIsInvalid) +
                       QString("(invalid calendar date)"));
+        date = QString(kNA);
+        return false;
+    }
+
+    return true;
+}
+
+bool isTimeValid(const QString& timeStr, QStringList& errors) {
+    if (timeStr.isEmpty()) {
+        errors.append("Time field is empty");
+        return false;
+    }
+
+    bool ok;
+    int hours = timeStr.midRef(0, 2).toInt(&ok);
+    if (!ok || hours < 0 || hours > 23) {
+        errors.append("Invalid hours in time field");
+        return false;
+    }
+
+    int minutes = timeStr.midRef(2, 2).toInt(&ok);
+    if (!ok || minutes < 0 || minutes > 59) {
+        errors.append("Invalid minutes in time field");
+        return false;
+    }
+
+    double seconds = timeStr.midRef(4).toDouble(&ok);
+    if (!ok || seconds < 0.0 || seconds >= 60.0) {
+        errors.append("Invalid seconds in time field");
         return false;
     }
 
@@ -174,22 +213,37 @@ bool isDateValid(const QString& date, QStringList& errors) {
 
 }  // end namespace
 
-void GPSParser::parseLine(const QString& line) {
+GPSParser::GPSParser(EmitMode mode) : emitMode(mode) {}
+
+void GPSParser::parseLine(const QString line) {
     if (line.isEmpty()) return;
+    static QString rmcTime = "";
     static bool isGGA_Ready = false;
     static bool isRMC_Ready = false;
 
-    if (line.startsWith("$GPGGA")) {
+    if (line.startsWith("$GPRMC")) {
+        parseRMC(line, rmcTime, isRMC_Ready);
+    } else if (line.startsWith("$GPGGA")) {
         parseGGA(line, isGGA_Ready);
-    } else if (line.startsWith("$GPRMC")) {
-        parseRMC(line, isRMC_Ready);
     }
-    if (isGGA_Ready && isRMC_Ready) {
+
+    bool shouldEmit = false;
+    switch (emitMode) {
+        case EmitMode::BothValid:
+            shouldEmit = (isGGA_Ready && isRMC_Ready &&
+                          isSameMoment(rmcTime, data.timeUtc));
+            break;
+        case EmitMode::AnyValid:
+            shouldEmit = (isGGA_Ready || isRMC_Ready);
+            break;
+    }
+
+    if (shouldEmit) {
+        emit gpsUpdated(data, QPrivateSignal{});
         if (!data.errors.empty()) {
             qWarning() << data.errors;
-            data.clearErrors();
         }
-        emit gpsUpdated(data, QPrivateSignal{});
+        data.clearGpsData();
         isGGA_Ready = false;
         isRMC_Ready = false;
     }
@@ -201,45 +255,97 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
         isValid = false;
         return;
     }
-
-    data.altitude = parts[kGgaAltitudeFieldPartIndex].toDouble();
+    bool isOk = false;
+    data.altitude = parts[kGgaAltitudeFieldPartIndex].toDouble(&isOk);
     isAltitudeRangeValid(data.altitude, data.errors);
+    if (!isOk) {
+        data.altitude = NAN;
+    }
 
     data.timeUtc = parts[kGgaTimeUtcPartIndex];
+    isOk = isTimeValid(data.timeUtc, data.errors);
+    if (!isOk) {
+        data.timeUtc = kNAN;
+    }
+    if (isnan(data.latitude)) {
+        double latitude =
+            toDegrees(parts[kGgaLatitudeFieldPartIndex],
+                      parts[kGgaLatitudeFieldPartDirection], data.errors);
+        if (isLatitudeValid(latitude, data.errors)) {
+            data.latitude = latitude;
+        };
+    }
+    if (isnan(data.longitude)) {
+        double longitude =
+            toDegrees(parts[kGgaLongitudeFieldPartIndex],
+                      parts[kGgaLongitudeFieldPartDirection], data.errors);
+        if (isLongitudeValid(longitude, data.errors)) {
+            data.longitude = longitude;
+        };
+    }
 
-    data.satellites = parts[kGgaSatellitesPartIndex].toInt();
+    data.satellites = parts[kGgaSatellitesPartIndex].toInt(&isOk);
     isSatellitesNumberValid(data.satellites, data.errors);
+    if (!isOk) {
+        data.satellites = NAN;
+    }
 
     data.isGpsDataValid =
-        isGpsFlagValid(parts[kGgaValidGpsFlagPartIndex], data.errors);
+        isGgaFixQuality(parts[kGgaFixQualityPartIndex], data.errors);
     isValid = data.isGpsDataValid;
 }
 
-void GPSParser::parseRMC(const QString& line, bool& isValid) {
+void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
     QStringList parts = line.split(",");
     if (!isRmcNumberValid(parts.size(), data.errors)) {
         isValid = false;
         return;
     }
+    rmcTime = parts[kRmcTimeUtcPartIndex];
+    if (!isTimeValid(rmcTime, data.errors)) {
+        rmcTime = kNAN;
+    }
+    bool isOk = false;
+    if (isnan(data.latitude)) {
+        double latitude =
+            toDegrees(parts[kRmcLatitudeFieldPartIndex],
+                      parts[kRmcLatitudeFieldPartDirection], data.errors);
+        if (isLatitudeValid(latitude, data.errors)) {
+            data.latitude = latitude;
+        }
+    }
+    if (isnan(data.longitude)) {
+        double longitude =
+            toDegrees(parts[kRmcLongitudeFieldPartIndex],
+                      parts[kRmcLongitudeFieldPartDirection], data.errors);
+        if (isLongitudeValid(longitude, data.errors)) {
+            data.longitude = longitude;
+        }
+    }
 
-    data.latitude =
-        toDegrees(parts[kRmcLatitudeFieldPartIndex],
-                  parts[kRmcLatitudeFieldPartDirection], data.errors);
-    isLatitudeValid(data.latitude, data.errors);
-
-    data.longitude =
-        toDegrees(parts[kRmcLongitudeFieldPartIndex],
-                  parts[kRmcLongitudeFieldPartDirection], data.errors);
-    isLongitudeValid(data.longitude, data.errors);
-
-    data.speedKmh = parts[kRmcSpeedPartIndex].toDouble() * kMileToKmConversion;
+    data.speedKmh =
+        parts[kRmcSpeedPartIndex].toDouble(&isOk) * kMileToKmConversion;
     isSpeedValueValid(data.speedKmh, data.errors);
+    if (!isOk) {
+        data.speedKmh = NAN;
+    }
 
-    data.course = parts[kRmcCoursePartIndex].toDouble();
+    data.course = parts[kRmcCoursePartIndex].toDouble(&isOk);
     isCourseValid(data.course, data.errors);
+    if (!isOk) {
+        data.course = NAN;
+    }
 
     data.date = parts[kRmcDatePartIndex];
     isDateValid(data.date, data.errors);
 
-    isValid = isRmcStatusValid(parts[kRmcStatusPartIndex], data.errors);
+    isValid = isRmcStatusQuality(parts[kRmcStatusFixPartIndex], data.errors);
+    if (emitMode == EmitMode::AnyValid) {
+        data.isGpsDataValid = isValid;
+    }
+}
+
+bool GPSParser::isSameMoment(const QString& rmcTime, const QString& ggaTime) {
+    if (rmcTime.isEmpty() || ggaTime.isEmpty()) return false;
+    return rmcTime.left(6) == ggaTime.left(6);
 }

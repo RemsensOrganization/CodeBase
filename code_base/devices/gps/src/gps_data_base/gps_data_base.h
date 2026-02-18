@@ -25,9 +25,9 @@ struct GpsDeviceEntry {
 
 class GpsDataBase {
 public:
-    explicit GpsDataBase(const QString& filePath = "gps_database.json");
+    explicit GpsDataBase(const QString& filePath = "gps_devices.json");
 
-    void createDefaultDatabase();
+    void createDefaultDatabaseIfNotExist();
     QList<GpsDeviceEntry> loadDatabase();
 
 private:

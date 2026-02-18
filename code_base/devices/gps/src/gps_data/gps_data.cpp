@@ -5,6 +5,9 @@
 
 #include "qjsondocument.h"
 
+extern const char kNA[] = "NA";
+extern const char kNAN[] = "null";
+
 namespace {
 
 QJsonDocument GpsDataToJson(const GpsData& data) {
@@ -53,7 +56,7 @@ QString toCsvString(const GpsData& data) {
     if (!data.isGpsDataValid) {
         return "GpsData is invalid.";
     }
-    return QString("%1,%2,%3,%4,%5,%6,%7,%8")
+    return QString("%1,%2,%3,%4,%5,%6,%7,%8,\n")
         .arg(data.latitude, 0, 'f', 6)
         .arg(data.longitude, 0, 'f', 6)
         .arg(data.altitude, 0, 'f', 1)
