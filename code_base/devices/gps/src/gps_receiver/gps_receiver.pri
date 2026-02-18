@@ -1,7 +1,10 @@
 QT += serialport core
 
+<<<<<<< simple_use
 include(../gps_device_status/gps_device_status.pri)
 
+=======
+>>>>>>> main
 PORT_READER_DIR = $$PWD
 
 INCLUDEPATH += $$PORT_READER_DIR
