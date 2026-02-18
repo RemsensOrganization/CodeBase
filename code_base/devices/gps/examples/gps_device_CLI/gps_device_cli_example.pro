@@ -1,5 +1,6 @@
 TARGET = gps_device_cli_example
 
+include(../root.pri)
 TEMPLATE = app
 
 CONFIG += c++11
