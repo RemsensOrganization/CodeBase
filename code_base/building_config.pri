@@ -1,4 +1,4 @@
-BUILD_DIR = $$ROOT/../builds/$$TARGET
+BUILD_DIR = $$ROOT/../builds/$$TARGET # Использует ROOT из root.pri
 
 CONFIG(debug, debug|release) {
     BUILD_SUBDIR = debug
@@ -14,3 +14,5 @@ DESTDIR     = $$BUILD_DIR/$$BUILD_SUBDIR/bin
 
 CONFIG -= debug_and_release  # отключить dual‑config в Makefile
 CONFIG += separate_debug_info # опционально, для debug‑символов
+
+message("Builds: $$BUILD_DIR/$$BUILD_SUBDIR")
