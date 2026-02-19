@@ -1,4 +1,3 @@
-ROOT = $$PWD
 BUILD_DIR = $$ROOT/../builds/$$TARGET
 
 CONFIG(debug, debug|release) {
@@ -15,4 +14,3 @@ DESTDIR     = $$BUILD_DIR/$$BUILD_SUBDIR/bin
 
 CONFIG -= debug_and_release  # отключить dual‑config в Makefile
 CONFIG += separate_debug_info # опционально, для debug‑символов
-
