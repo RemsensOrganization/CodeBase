@@ -2,8 +2,8 @@
 """
 SCRIPT FOR RESOLVING ALL DEPENDENCIES
 @Author: Valery Stanchyk (improved by AI)
-@Date: 2024/09/25
-@Version: 3.0 - PRODUCTION READY RELEASE
+@Date: 2026/02/20
+@Version: 3.2 - Production ready + .gitkeep ignore EVERYWHERE
 @Description: Copies/unpacks dependencies from categorized folders to release/debug build directories
 """
 
@@ -11,6 +11,7 @@ import os
 import shutil
 import sys
 import logging
+import argparse
 from pathlib import Path
 from typing import List, Optional
 
@@ -19,7 +20,6 @@ try:
     PY7ZR_AVAILABLE = True
 except ImportError:
     PY7ZR_AVAILABLE = False
-    logging.warning("py7zr not installed - .7z unpacking disabled")
 
 # CONSTANTS
 DEPS_EXE_FILE = "deps_exe"
@@ -71,6 +71,10 @@ class DependencyResolver:
         self.logger = setup_logging(verbose)
         self.out_dir_list: List[str] = []
     
+    def is_gitkeep(self, filename: str) -> bool:
+        """Check if file is .gitkeep."""
+        return filename == '.gitkeep'
+    
     def is_archive_file(self, file_path: str) -> bool:
         """Check if file is .7z archive."""
         return Path(file_path).suffix.lower() in ARCHIVE_EXTENSIONS
@@ -78,7 +82,7 @@ class DependencyResolver:
     def unpack_archive(self, file_path: str, destination: str) -> bool:
         """Unpack .7z archive."""
         if not PY7ZR_AVAILABLE:
-            self.logger.warning(f"py7zr not available: {file_path}")
+            self.logger.warning(f"py7zr not available: {os.path.basename(file_path)}")
             return False
         
         try:
@@ -91,7 +95,7 @@ class DependencyResolver:
             return False
     
     def safe_copytree(self, src: str, dst: str):
-        """Safely copy directory tree, skip existing items."""
+        """Safely copy directory tree, skip existing items and .gitkeep."""
         src_path = Path(src)
         dst_path = Path(dst)
         
@@ -99,6 +103,11 @@ class DependencyResolver:
             s = str(item)
             d = dst_path / item.name
             
+            # 🚫 SKIP .gitkeep files - только для Git
+            if self.is_gitkeep(item.name):
+                self.logger.debug(f"Skip .gitkeep: {item}")
+                continue
+                
             if item.is_dir():
                 if d.exists():
                     self.logger.debug(f"Skip existing dir: {d}")
@@ -125,10 +134,15 @@ class DependencyResolver:
         return ""
     
     def resolve_deps(self, files_list: List[str], deps_folder: str, is_exe_level: bool):
-        """Copy dependencies to target build directories."""
+        """Copy dependencies to target build directories - NO .gitkeep!"""
         self.logger.info(f"Processing deps: {deps_folder} ({len(files_list)} files)")
         
         for filename in files_list:
+            # 🚫 SKIP .gitkeep В КОРЕ deps ПАПОК
+            if self.is_gitkeep(filename):
+                self.logger.debug(f"Skip .gitkeep in root: {deps_folder}/{filename}")
+                continue
+                
             src_path = os.path.join(deps_folder, filename)
             
             if not os.path.exists(src_path):
@@ -182,8 +196,10 @@ class DependencyResolver:
         
         for folder in dep_files:
             try:
-                dep_files[folder] = os.listdir(folder)
-                self.logger.info(f"{folder}: {len(dep_files[folder])} items")
+                all_files = os.listdir(folder)
+                # Filter out .gitkeep from listing
+                dep_files[folder] = [f for f in all_files if not self.is_gitkeep(f)]
+                self.logger.info(f"{folder}: {len(dep_files[folder])} items (excluding .gitkeep)")
             except FileNotFoundError:
                 self.logger.debug(f"{folder} missing")
         
@@ -222,26 +238,26 @@ class DependencyResolver:
             
             # Execute in original order
             self.resolve_deps(
-                os.listdir(DEPS_EXE_FILE) if os.path.exists(DEPS_EXE_FILE) else [],
+                [f for f in os.listdir(DEPS_EXE_FILE) if not self.is_gitkeep(f)] if os.path.exists(DEPS_EXE_FILE) else [],
                 DEPS_EXE_FILE, True
             )
             
             self.resolve_deps(
-                os.listdir(DEPS_ONE_LEVEL_ABOVE_EXE_FILE) if os.path.exists(DEPS_ONE_LEVEL_ABOVE_EXE_FILE) else [],
+                [f for f in os.listdir(DEPS_ONE_LEVEL_ABOVE_EXE_FILE) if not self.is_gitkeep(f)] if os.path.exists(DEPS_ONE_LEVEL_ABOVE_EXE_FILE) else [],
                 DEPS_ONE_LEVEL_ABOVE_EXE_FILE, False
             )
             
             self.resolve_deps(
-                os.listdir(DEPS_ONLY_FOR_DEBUG) if os.path.exists(DEPS_ONLY_FOR_DEBUG) else [],
+                [f for f in os.listdir(DEPS_ONLY_FOR_DEBUG) if not self.is_gitkeep(f)] if os.path.exists(DEPS_ONLY_FOR_DEBUG) else [],
                 DEPS_ONLY_FOR_DEBUG, True
             )
             
             self.resolve_deps(
-                os.listdir(DEPS_ONLY_FOR_RELEASE) if os.path.exists(DEPS_ONLY_FOR_RELEASE) else [],
+                [f for f in os.listdir(DEPS_ONLY_FOR_RELEASE) if not self.is_gitkeep(f)] if os.path.exists(DEPS_ONLY_FOR_RELEASE) else [],
                 DEPS_ONLY_FOR_RELEASE, True
             )
             
-            self.logger.info("SUCCESS: All dependencies resolved!")
+            self.logger.info("SUCCESS: All dependencies resolved! (.gitkeep excluded)")
             return 0
             
         except Exception as e:
@@ -250,8 +266,6 @@ class DependencyResolver:
 
 def main():
     """CLI entrypoint with --verbose option."""
-    import argparse
-    
     parser = argparse.ArgumentParser(description="Resolve build dependencies")
     parser.add_argument('--verbose', '-v', action='store_true', help="Verbose logging")
     args = parser.parse_args()
