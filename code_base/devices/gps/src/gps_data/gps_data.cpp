@@ -23,10 +23,6 @@ QJsonDocument GpsDataToJson(const GpsData& data) {
 namespace gps {
 
 QString toStyledString(const GpsData& data) {
-    if (!data.isGpsDataValid) {
-        qWarning() << "GpsData is invalid.";
-        return "";
-    }
     QStringList parts;
     parts << QString("Coordinates: %1, %2")
                  .arg(data.latitude, 0, 'f', 6)
@@ -53,9 +49,6 @@ QString toStyledString(const GpsData& data) {
 }
 
 QString toCsvString(const GpsData& data) {
-    if (!data.isGpsDataValid) {
-        return "GpsData is invalid.";
-    }
     return QString("%1,%2,%3,%4,%5,%6,%7,%8,\n")
         .arg(data.latitude, 0, 'f', 6)
         .arg(data.longitude, 0, 'f', 6)
