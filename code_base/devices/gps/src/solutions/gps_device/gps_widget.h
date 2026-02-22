@@ -3,7 +3,7 @@
 
 #include <QPlainTextEdit>
 #include <QtWidgets>
-// Самый новый
+
 struct GpsData;
 
 class GpsWidget : public QWidget {
