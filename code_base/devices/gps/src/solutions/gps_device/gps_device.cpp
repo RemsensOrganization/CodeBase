@@ -23,7 +23,7 @@ GPSDevice::GPSDevice(EmitMode mode, QObject *parent) : QObject(parent) {
                      &GPSDevice::gpsStatusUpdated);
 
     QObject::connect(m_gps_parser, &GPSParser::gpsUpdated, this,
-                     &GPSDevice::gpsDataUpdated);
+                     &GPSDevice::gpsDataReceived);
 }
 
 GPSDevice::~GPSDevice() {
@@ -83,7 +83,7 @@ bool GPSDevice::setupBeforeStart() {
 }
 
 void GPSDevice::gpsStatusUpdated(GpsStatus status) {
-    emit gpsStatusChanged(toString(status));
+    emit gpsStatusChanged(toString(status), QPrivateSignal{});
     switch (status) {
         case GpsStatus::OFFLINE:  // нет связи с COM-портом
             break;
@@ -95,5 +95,12 @@ void GPSDevice::gpsStatusUpdated(GpsStatus status) {
             break;
         case GpsStatus::DATA_ERROR:  // ошибка данных
             break;
+    }
+}
+
+void GPSDevice::gpsDataReceived(const GpsData data) {
+    emit gpsDataUpdated(data, QPrivateSignal{});
+    if (!data.errors.empty()) {
+        // обработка сценария ошибок
     }
 }

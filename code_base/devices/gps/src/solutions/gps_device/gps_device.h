@@ -41,8 +41,8 @@ public slots:
         const QString &fileFullPath = kOriginDataFileName);
 
 signals:
-    void gpsStatusChanged(const QString &msg);
-    void gpsDataUpdated(const GpsData &data);
+    void gpsStatusChanged(const QString &msg, QPrivateSignal);
+    void gpsDataUpdated(const GpsData &data, QPrivateSignal);
 
 private:
     bool setupBeforeStart();
@@ -54,6 +54,7 @@ private:
 
 private slots:
     void gpsStatusUpdated(GpsStatus status);
+    void gpsDataReceived(const GpsData data);
 };
 
 #endif  // DEVICES_GPS_SRC_SOLUTIONS_GPS_DEVICE_GPS_DEVICE_H_
