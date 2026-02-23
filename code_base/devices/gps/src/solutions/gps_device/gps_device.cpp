@@ -34,17 +34,17 @@ GPSDevice::~GPSDevice() {
 }
 
 void GPSDevice::start() {
-    if (!setupBeforeStart()) return;
+    if (m_future.isRunning()) return;
     m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start);
 }
 
 void GPSDevice::start(const QString &portName) {
-    if (!setupBeforeStart()) return;
+    if (m_future.isRunning()) return;
     m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start, portName);
 }
 
 void GPSDevice::start(const QString &portName, QSerialPort::BaudRate baudRate) {
-    if (!setupBeforeStart()) return;
+    if (m_future.isRunning()) return;
     m_future = QtConcurrent::run(m_gps_receiver, &GPSReceiver::start, portName,
                                  baudRate);
 }
@@ -71,15 +71,6 @@ void GPSDevice::writeOriginGpsDataToFile(const QString &fileFullPath) {
                      [fileFullPath](const QByteArray &data) {
                          logger::saveGpsLineToFile(data, fileFullPath);
                      });
-}
-
-bool GPSDevice::setupBeforeStart() {
-    if (m_future.isRunning()) {
-        qDebug() << "GPS device already running. Doing nothing";
-        return false;
-    }
-    qDebug() << "GPS device receved request to be started";
-    return true;
 }
 
 void GPSDevice::gpsStatusUpdated(GpsStatus status) {
