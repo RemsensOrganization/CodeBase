@@ -6,13 +6,23 @@
 
 struct GpsData;
 
-class GpsWidget : public QWidget {
+class IGpsView {
 public:
-    GpsWidget(QWidget* parent = nullptr);
+    virtual ~IGpsView() = default;
+    virtual QWidget* widget() = 0;  // вернуть сам виджет
+    virtual void showGpsData(const GpsData& data) = 0;
+    virtual void showGpsStatus(const QString& status) = 0;
+};
 
-public slots:
-    void showGpsData(const GpsData& data);
-    void showGpsStatus(const QString& status);
+// Одна из возможных реализаций. Можно добавить другие, отнаследовавшись от
+// IGpsView
+class GpsSimpleWidget : public QWidget, public IGpsView {
+    Q_OBJECT
+public:
+    explicit GpsSimpleWidget(QWidget* parent = nullptr);
+    QWidget* widget() override { return this; }
+    void showGpsData(const GpsData& data) override;
+    void showGpsStatus(const QString& status) override;
 
 private:
     QLabel* latitudeLabel;
