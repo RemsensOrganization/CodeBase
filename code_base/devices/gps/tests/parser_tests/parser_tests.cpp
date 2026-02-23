@@ -53,7 +53,6 @@ void TestsParser::test_gga_rmc_pair() {
     QList<QVariant> args = spy.takeFirst();
     QVERIFY(!args.empty());
     GpsData gpsData = args.at(0).value<GpsData>();
-    QVERIFY(gpsData.isGpsDataValid);
     QCOMPARE(gpsData.satellites, 8);
     QCOMPARE(gpsData.altitude, 545.4);
     QCOMPARE_FLOATS(gpsData.latitude, 53.00);
@@ -88,7 +87,6 @@ void TestsParser::test_unreal_values() {
     QList<QVariant> args = spy.takeFirst();
     QVERIFY(!args.empty());
     GpsData gpsData = args.at(0).value<GpsData>();
-    QVERIFY(gpsData.isGpsDataValid);
     qDebug() << "unreal satellites: " << gpsData.satellites;
     QCOMPARE(gpsData.satellites, 99);
     qDebug() << gpsData.altitude;

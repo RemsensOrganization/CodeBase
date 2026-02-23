@@ -19,7 +19,6 @@ struct GpsData {
     QString date = kNAN;
     QString timeUtc = kNAN;
     int satellites = NAN;
-    bool isGpsDataValid = false;
     // parsing errors
     QStringList errors;
 
@@ -32,7 +31,6 @@ struct GpsData {
         date = kNAN;
         timeUtc = kNAN;
         satellites = NAN;
-        isGpsDataValid = false;
         errors.clear();
     };
 };

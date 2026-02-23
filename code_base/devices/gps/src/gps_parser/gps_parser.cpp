@@ -290,9 +290,7 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
         data.satellites = NAN;
     }
 
-    data.isGpsDataValid =
-        isGgaFixQuality(parts[kGgaFixQualityPartIndex], data.errors);
-    isValid = data.isGpsDataValid;
+    isValid = isGgaFixQuality(parts[kGgaFixQualityPartIndex], data.errors);
 }
 
 void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
@@ -340,9 +338,6 @@ void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
     isDateValid(data.date, data.errors);
 
     isValid = isRmcStatusQuality(parts[kRmcStatusFixPartIndex], data.errors);
-    if (emitMode == EmitMode::AnyValid) {
-        data.isGpsDataValid = isValid;
-    }
 }
 
 bool GPSParser::isSameMoment(const QString& rmcTime, const QString& ggaTime) {
