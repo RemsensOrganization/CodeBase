@@ -58,6 +58,12 @@ void GPSDevice::stop() {
 
 void GPSDevice::writeFormattedGpsDataToFile(logger::saveFormat format,
                                             const QString &fileFullPath) {
+    if (m_formattedFilePath == fileFullPath && m_formattedSaveFormat == format)
+        return;  // ничего не изменилось
+
+    m_formattedFilePath = fileFullPath;
+    m_formattedSaveFormat = format;
+
     QObject::disconnect(m_saveFormattedConnection);  // отключаем старый
     m_saveFormattedConnection = QObject::connect(
         m_gps_parser, &GPSParser::gpsUpdated,
@@ -67,7 +73,11 @@ void GPSDevice::writeFormattedGpsDataToFile(logger::saveFormat format,
 }
 
 void GPSDevice::writeOriginGpsDataToFile(const QString &fileFullPath) {
-    QObject::disconnect(m_saveOriginConnection);
+    if (m_originFilePath == fileFullPath) return;  // путь не изменился
+
+    m_originFilePath = fileFullPath;
+
+    QObject::disconnect(m_saveOriginConnection);  // отключаем старый
     m_saveOriginConnection =
         QObject::connect(m_gps_receiver, &GPSReceiver::gpsDataReceived,
                          [fileFullPath](const QByteArray &line) {

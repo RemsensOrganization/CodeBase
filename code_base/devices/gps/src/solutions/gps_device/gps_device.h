@@ -59,6 +59,9 @@ signals:
 private:
     QMetaObject::Connection m_saveFormattedConnection;
     QMetaObject::Connection m_saveOriginConnection;
+    logger::saveFormat m_formattedSaveFormat{};
+    QString m_originFilePath;
+    QString m_formattedFilePath;
     GPSReceiver *m_gps_receiver;
     GPSParser *m_gps_parser;
     QFuture<void> m_future;
