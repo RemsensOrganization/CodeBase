@@ -58,19 +58,31 @@ void GPSDevice::stop() {
 
 void GPSDevice::writeFormattedGpsDataToFile(logger::saveFormat format,
                                             const QString &fileFullPath) {
-    m_isSaveGpsDataToFile_connected = true;
-    QObject::connect(m_gps_parser, &GPSParser::gpsUpdated,
-                     [format, fileFullPath](const GpsData &data) {
-                         logger::saveGpsDataToFile(data, format, fileFullPath);
-                     });
+    if (m_formattedFilePath == fileFullPath && m_formattedSaveFormat == format)
+        return;  // ничего не изменилось
+
+    m_formattedFilePath = fileFullPath;
+    m_formattedSaveFormat = format;
+
+    QObject::disconnect(m_saveFormattedConnection);  // отключаем старый
+    m_saveFormattedConnection = QObject::connect(
+        m_gps_parser, &GPSParser::gpsUpdated,
+        [format, fileFullPath](const GpsData &data) {
+            logger::saveGpsDataToFile(data, format, fileFullPath);
+        });
 }
 
 void GPSDevice::writeOriginGpsDataToFile(const QString &fileFullPath) {
-    m_isSaveGpsLineToFile_connected = true;
-    QObject::connect(m_gps_receiver, &GPSReceiver::gpsDataReceived,
-                     [fileFullPath](const QByteArray &data) {
-                         logger::saveGpsLineToFile(data, fileFullPath);
-                     });
+    if (m_originFilePath == fileFullPath) return;  // путь не изменился
+
+    m_originFilePath = fileFullPath;
+
+    QObject::disconnect(m_saveOriginConnection);  // отключаем старый
+    m_saveOriginConnection =
+        QObject::connect(m_gps_receiver, &GPSReceiver::gpsDataReceived,
+                         [fileFullPath](const QByteArray &line) {
+                             logger::saveGpsLineToFile(line, fileFullPath);
+                         });
 }
 
 void GPSDevice::gpsStatusUpdated(GpsStatus status) {
