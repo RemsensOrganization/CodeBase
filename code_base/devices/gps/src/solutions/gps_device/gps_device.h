@@ -20,11 +20,10 @@ constexpr char kFormattedDataFileName[] = "gpsDataFormatted.txt";
 class GPSDevice : public QObject {
     Q_OBJECT
 public:
-    GpsWidget *createWidget(QWidget *parent = nullptr);
-
     explicit GPSDevice(EmitMode mode = EmitMode::BothValid,
                        QObject *parent = nullptr);
     bool isRunning() const { return m_future.isRunning(); };
+    void attachView(IGpsView *view);
     ~GPSDevice();
 
 public slots:

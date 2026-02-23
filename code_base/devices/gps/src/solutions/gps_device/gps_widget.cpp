@@ -3,7 +3,7 @@
 #include "QVBoxLayout"
 #include "gps_data.h"
 
-GpsWidget::GpsWidget(QWidget *parent) : QWidget(parent) {
+GpsSimpleWidget::GpsSimpleWidget(QWidget *parent) : QWidget(parent) {
     layout = new QFormLayout(this);
     latitudeLabel = new QLabel(kNA);
     longitudeLabel = new QLabel(kNA);
@@ -26,7 +26,7 @@ GpsWidget::GpsWidget(QWidget *parent) : QWidget(parent) {
     layout->addRow("Status:", gpsStatusLabel);
 }
 
-void GpsWidget::showGpsData(const GpsData &data) {
+void GpsSimpleWidget::showGpsData(const GpsData &data) {
     latitudeLabel->setText(QString::number(data.latitude, 'f', 6));
     longitudeLabel->setText(QString::number(data.longitude, 'f', 6));
     altitudeLabel->setText(QString::number(data.altitude, 'f', 1));
@@ -36,6 +36,6 @@ void GpsWidget::showGpsData(const GpsData &data) {
     timeUtcLabel->setText(data.timeUtc);
     satellitesLabel->setText(QString::number(data.satellites));
 };
-void GpsWidget::showGpsStatus(const QString &status) {
+void GpsSimpleWidget::showGpsStatus(const QString &status) {
     gpsStatusLabel->setText(status);
 };

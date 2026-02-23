@@ -7,10 +7,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     gps = new GPSDevice;
-    GpsWidget *widget =
-        gps->createWidget(this);  // создали виджет и теперь можно
-                                  // использовать его в своем GUI
-    ui->verticalLayout->addWidget(widget);
+
+    auto *w1 = new GpsSimpleWidget(this);  // создали виджет и теперь можно
+                                           // использовать его в своем GUI
+    gps->attachView(w1);
+    ui->verticalLayout->addWidget(w1);
     gps->start();
     gps->writeOriginGpsDataToFile();
     gps->writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented);
