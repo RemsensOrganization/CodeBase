@@ -45,7 +45,6 @@ signals:
     void gpsDataUpdated(const GpsData &data, QPrivateSignal);
 
 private:
-    bool setupBeforeStart();
     bool m_isSaveGpsDataToFile_connected = false;
     bool m_isSaveGpsLineToFile_connected = false;
     GPSReceiver *m_gps_receiver;
