@@ -18,12 +18,14 @@ public:
 
 private slots:
     void on_pushButton_start_clicked();
-
     void on_pushButton_stop_clicked();
 
 private:
     Ui::MainWindow *ui;
-    GPSDevice *gps;
+    GPSDevice *m_gps;
+    QDockWidget *m_gps_dock;
+    QPushButton *pushButton_start;
+    QPushButton *pushButton_stop;
 };
 
 #endif  // MAINWINDOW_H
