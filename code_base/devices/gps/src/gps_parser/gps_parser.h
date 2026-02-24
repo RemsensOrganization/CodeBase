@@ -30,6 +30,9 @@ private:
 
     EmitMode emitMode;
     GpsData data;
+    QString rmcTime = "";
+    bool isGGA_Ready = false;
+    bool isRMC_Ready = false;
 };
 
 #endif  // DEVICES_GPS_SRC_GPS_PARSER_GPS_PARSER_H_
