@@ -27,25 +27,39 @@ public:
     ~GPSDevice();
 
 public slots:
+    //! запуск приема данных с устройства
     void start();  // автодетект порта (поиск gps приёмников из файла
                    // gps_devices.json)
     void start(const QString &portName);  // default baudRate
     void start(const QString &portName, QSerialPort::BaudRate baudRate);
-    void stop();  // вызов есть в  деструкторе класса
 
+    //! остановка приема данных с устройства
+    void stop();  // этот вызов есть также в  деструкторе класса
+
+    //! сохранение форматированных данных на диск.
+    //! можно менять путь для сохранения на лету при помощи повторного вызова
     void writeFormattedGpsDataToFile(
         logger::saveFormat format,
         const QString &fileFullPath = kFormattedDataFileName);
+
+    //! сохранение сырых данных на диск.
+    //! можно менять путь для сохранения на лету при помощи повторного вызова
     void writeOriginGpsDataToFile(
         const QString &fileFullPath = kOriginDataFileName);
 
 signals:
+    //! сигнал со статусом gps
     void gpsStatusChanged(const QString &msg, QPrivateSignal);
+
+    //! сигнал с данными от gps
     void gpsDataUpdated(const GpsData &data, QPrivateSignal);
 
 private:
-    bool m_isSaveGpsDataToFile_connected = false;
-    bool m_isSaveGpsLineToFile_connected = false;
+    QMetaObject::Connection m_saveFormattedConnection;
+    QMetaObject::Connection m_saveOriginConnection;
+    logger::saveFormat m_formattedSaveFormat{};
+    QString m_originFilePath;
+    QString m_formattedFilePath;
     GPSReceiver *m_gps_receiver;
     GPSParser *m_gps_parser;
     QFuture<void> m_future;
