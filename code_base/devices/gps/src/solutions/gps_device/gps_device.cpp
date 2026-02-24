@@ -1,15 +1,5 @@
 #include "gps_device.h"
 
-GpsWidget *GPSDevice::createWidget(QWidget *parent) {
-    GpsWidget *widget = new GpsWidget(parent);
-
-    QObject::connect(this, &GPSDevice::gpsDataUpdated, widget,
-                     &GpsWidget::showGpsData);
-    QObject::connect(this, &GPSDevice::gpsStatusChanged, widget,
-                     &GpsWidget::showGpsStatus);
-    return widget;
-}
-
 GPSDevice::GPSDevice(EmitMode mode, QObject *parent) : QObject(parent) {
     qRegisterMetaType<GpsData>("GpsData");
     qRegisterMetaType<GpsStatus>("GpsStatus");
@@ -31,6 +21,14 @@ GPSDevice::~GPSDevice() {
     delete m_gps_receiver;
     delete m_gps_parser;
     qDebug() << "GPSDevice is deleted";
+}
+
+void GPSDevice::attachView(IGpsView *view) {
+    QObject::connect(this, &GPSDevice::gpsDataUpdated, view->widget(),
+                     [view](const GpsData &data) { view->showGpsData(data); });
+    QObject::connect(
+        this, &GPSDevice::gpsStatusChanged, view->widget(),
+        [view](const QString &status) { view->showGpsStatus(status); });
 }
 
 void GPSDevice::start() {
