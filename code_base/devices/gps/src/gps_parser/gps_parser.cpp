@@ -217,9 +217,6 @@ GPSParser::GPSParser(EmitMode mode) : emitMode(mode) {}
 
 void GPSParser::parseLine(const QString line) {
     if (line.isEmpty()) return;
-    static QString rmcTime = "";
-    static bool isGGA_Ready = false;
-    static bool isRMC_Ready = false;
 
     if (line.startsWith("$GPRMC")) {
         parseRMC(line, rmcTime, isRMC_Ready);
