@@ -33,9 +33,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_gps->writeOriginGpsDataToFile();
     m_gps->writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented);
     connect(pushButton_start, &QPushButton::clicked, this,
-            &MainWindow::on_pushButton_start_clicked);
+            &MainWindow::pushButton_start_clicked);
     connect(pushButton_stop, &QPushButton::clicked, this,
-            &MainWindow::on_pushButton_stop_clicked);
+            &MainWindow::pushButton_stop_clicked);
 }
 
 MainWindow::~MainWindow() {
@@ -43,6 +43,6 @@ MainWindow::~MainWindow() {
     delete m_gps;
 }
 
-void MainWindow::on_pushButton_start_clicked() { m_gps->start(); }
+void MainWindow::pushButton_start_clicked() { m_gps->start(); }
 
-void MainWindow::on_pushButton_stop_clicked() { m_gps->stop(); }
+void MainWindow::pushButton_stop_clicked() { m_gps->stop(); }
