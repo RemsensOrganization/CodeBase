@@ -4,6 +4,7 @@
 #include "gps_data.h"
 
 GpsSimpleWidget::GpsSimpleWidget(QWidget *parent) : QWidget(parent) {
+    setAutoFillBackground(true);
     layout = new QFormLayout(this);
     latitudeLabel = new QLabel(kNA);
     longitudeLabel = new QLabel(kNA);
