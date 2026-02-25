@@ -23,6 +23,7 @@ GPSDevice::~GPSDevice() {
     qDebug() << "GPSDevice is deleted";
 }
 
+#ifndef GPS_CONSOLE_BUILD
 void GPSDevice::attachView(IGpsView *view) {
     QObject::connect(this, &GPSDevice::gpsDataUpdated, view->widget(),
                      [view](const GpsData &data) { view->showGpsData(data); });
@@ -30,6 +31,7 @@ void GPSDevice::attachView(IGpsView *view) {
         this, &GPSDevice::gpsStatusChanged, view->widget(),
         [view](const QString &status) { view->showGpsStatus(status); });
 }
+#endif
 
 void GPSDevice::start() {
     if (m_future.isRunning()) return;

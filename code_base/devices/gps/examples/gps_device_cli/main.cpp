@@ -7,7 +7,8 @@
 
 void signalHandler(int sig) {
     QCoreApplication::quit();
-    exit(0);
+    qDebug() << "gps process is closed.";
+    exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[]) {
