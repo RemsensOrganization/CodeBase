@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef DEVICES_GPS_EXAMPLES_GPS_DEVICE_GUI_MAINWINDOW_H_
+#define DEVICES_GPS_EXAMPLES_GPS_DEVICE_GUI_MAINWINDOW_H_
 
 #include <QMainWindow>
 
@@ -28,4 +28,4 @@ private:
     QPushButton *pushButton_stop;
 };
 
-#endif  // MAINWINDOW_H
+#endif  // DEVICES_GPS_EXAMPLES_GPS_DEVICE_GUI_MAINWINDOW_H_

@@ -1,5 +1,5 @@
-#ifndef GPS_CLI_PARSER_H
-#define GPS_CLI_PARSER_H
+#ifndef DEVICES_GPS_SRC_GPS_CLI_PARSER_GPS_CLI_PARSER_H_
+#define DEVICES_GPS_SRC_GPS_CLI_PARSER_GPS_CLI_PARSER_H_
 
 #include <QCommandLineParser>
 #include <QString>
@@ -33,4 +33,4 @@ private:
     bool m_valid{false};
 };
 
-#endif
+#endif  // DEVICES_GPS_SRC_GPS_CLI_PARSER_GPS_CLI_PARSER_H_
