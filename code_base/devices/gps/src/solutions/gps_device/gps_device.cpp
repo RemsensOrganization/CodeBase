@@ -49,7 +49,7 @@ void GPSDevice::start(const QString &portName, QSerialPort::BaudRate baudRate) {
 
 void GPSDevice::stop() {
     if (!m_future.isRunning()) return;
-    qDebug() << "GPS device receved request to be stopped";
+    qDebug() << "GPS device received request to be stopped";
     m_gps_receiver->stop();
     m_future.waitForFinished();
 }
