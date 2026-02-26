@@ -2,6 +2,7 @@
 #define DEVICES_GPS_EXAMPLES_GPS_DEVICE_GUI_MAINWINDOW_H_
 
 #include <QMainWindow>
+#include <QtWidgets>
 
 #include "gps_device.h"
 

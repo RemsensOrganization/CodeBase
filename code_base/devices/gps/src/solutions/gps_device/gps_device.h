@@ -9,9 +9,7 @@
 #include "gps_logger.h"
 #include "gps_parser.h"
 #include "gps_receiver.h"
-#ifndef GPS_CONSOLE_BUILD
-#include "gps_widget.h"
-#endif
+#include "gps_view_interface.h"
 #include "qobjectdefs.h"
 
 namespace {
@@ -25,9 +23,7 @@ public:
     explicit GPSDevice(EmitMode mode = EmitMode::BothValid,
                        QObject *parent = nullptr);
     bool isRunning() const { return m_future.isRunning(); };
-#ifndef GPS_CONSOLE_BUILD
     void attachView(IGpsView *view);
-#endif
     ~GPSDevice();
 
 public slots:
