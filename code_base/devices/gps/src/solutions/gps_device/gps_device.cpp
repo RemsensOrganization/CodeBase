@@ -84,7 +84,7 @@ void GPSDevice::writeOriginGpsDataToFile(const QString &fileFullPath) {
 }
 
 void GPSDevice::gpsStatusUpdated(GpsStatus status) {
-    emit gpsStatusChanged(toString(status), QPrivateSignal{});
+    emit gpsStatusChanged(gps::toString(status), QPrivateSignal{});
     switch (status) {
         case GpsStatus::OFFLINE:  // нет связи с COM-портом
             break;

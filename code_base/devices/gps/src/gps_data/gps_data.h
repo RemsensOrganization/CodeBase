@@ -6,6 +6,7 @@
 #include <QString>
 #include <QStringList>
 #include <climits>
+#include <cmath>
 
 extern const char kNA[];
 extern const char kNAN[];
@@ -18,7 +19,7 @@ struct GpsData {
     double course = NAN;
     QString date = kNAN;
     QString timeUtc = kNAN;
-    int satellites = NAN;
+    int satellites = -1;
     // parsing errors
     QStringList errors;
 
@@ -30,7 +31,7 @@ struct GpsData {
         course = NAN;
         date = kNAN;
         timeUtc = kNAN;
-        satellites = NAN;
+        satellites = -1;
         errors.clear();
     };
 };

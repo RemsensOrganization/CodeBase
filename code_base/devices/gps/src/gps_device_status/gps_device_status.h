@@ -14,8 +14,10 @@ enum class GpsStatus {
 };
 
 Q_DECLARE_METATYPE(GpsStatus)
-
+namespace gps {
 // Функция для получения текстового представления статуса
 QString toString(GpsStatus status);
+
+}  // namespace gps
 
 #endif  // DEVICES_GPS_SRC_GPS_DEVICE_STATUS_GPS_DEVICE_STATUS_H_
