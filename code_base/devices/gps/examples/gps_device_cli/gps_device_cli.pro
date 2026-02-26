@@ -1,4 +1,4 @@
-TARGET = gps_device_cli_example
+TARGET = gps_cli
 
 TEMPLATE = app
 CONFIG += gps_console_build
