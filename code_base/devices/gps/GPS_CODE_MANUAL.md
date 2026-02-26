@@ -6,7 +6,7 @@ Qt-модуль для чтения NMEA из последовательного
 
 ## 1. Быстрый старт
 
-Для работы с GPS Device вам понадобится дирректория `src` данного проекта.
+Для работы с GPS Device вам понадобится директория `src` данного проекта.
 
 ### - Подключение в qmake
 
@@ -112,7 +112,7 @@ device.writeOriginGpsDataToFile("your/fullpath/to/origin.txt");
 device.writeOriginGpsDataToFile();
 ```
 
-По умолчанию файл называется `gpsDataOrigin.txt` и создается в дирректории с исполняемым файлом.
+По умолчанию файл называется `gpsDataOrigin.txt` и создается в директории с исполняемым файлом.
 
 Повторный вызов с тем же путём ничего не делает (переподключение не выполняется).
 Если повторно вызвать с другим путем, то произойдет переключение на лету целевого файла для записи.
@@ -121,7 +121,7 @@ device.writeOriginGpsDataToFile();
 
 ```cpp
 device.writeFormattedGpsDataToFile(logger::saveFormat::csv,  "your/fullpath/to/formatted.txt");
-device.writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented, "your/fullpath/to/formatted.txt.txt"); //другой формат
+device.writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented, "your/fullpath/to/formatted.txt"); //другой формат
 //или
 device.writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented );
 ```
@@ -145,7 +145,7 @@ device.writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented );
 ## 6. EmitMode: принцип работы
 
 У `GPSDevice` в конструктор можно передать параметр `EmitMode`.
-`EmitMode` определяет правило, по которому `GPSDevice` решает, когда выдавать наружу очередные данные через сигнал: `emit gpsUpdated(data)`.
+`EmitMode` определяет правило, по которому `GPSDevice` решает, когда выдавать наружу очередные данные через сигнал: `emit gpsDataUpdated(data)`.
 
 Режимы
  - `EmitMode::BothValid` (по умолчанию)  
@@ -157,8 +157,7 @@ device.writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented );
 
 `gpsDataUpdated(data)` эмитится уже когда доступна хотя бы часть валидных данных ( GPRMC / GPGGA).
 Это более мягкий режим: обновления приходят чаще, но возможны ситуации, когда данные неполные.
-Будут сигналы с одинаковыми данными, т.к. GPRMC и GPGGA частично дублируют друг друга
-
+Возможны повторяющиеся/частично дублирующиеся обновления, т.к. GPRMC и GPGGA частично дублируют друг друга.
 
 ```cpp
 enum class EmitMode {
@@ -169,8 +168,8 @@ enum class EmitMode {
 ---
 
 ## 7. Проекты-примеры
-QT-проекты, показывающие применение GPS Device на практике, находятся в папке [examples](./examples/)  
-Имеются проект с виджетом для отображения данных GPS, проект без отображения и проект с интерфейсом команднйо строки
+QT-проекты, показывающие применение GPS Device на практике, находятся в директории [examples](./examples/)  
+Имеются проект с виджетом для отображения данных GPS, проект без отображения и проект с интерфейсом командной строки
 
 ---
 
