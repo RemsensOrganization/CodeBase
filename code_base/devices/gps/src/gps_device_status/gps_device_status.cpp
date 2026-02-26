@@ -1,5 +1,7 @@
 #include "gps_device_status.h"
 
+namespace gps {
+
 QString toString(GpsStatus status) {
     switch (status) {
         case GpsStatus::OFFLINE:
@@ -16,3 +18,5 @@ QString toString(GpsStatus status) {
             return "Unknown";
     }
 }
+
+}  // namespace gps

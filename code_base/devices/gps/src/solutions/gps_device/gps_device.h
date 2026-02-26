@@ -9,7 +9,7 @@
 #include "gps_logger.h"
 #include "gps_parser.h"
 #include "gps_receiver.h"
-#include "gps_widget.h"
+#include "gps_view_interface.h"
 #include "qobjectdefs.h"
 
 namespace {

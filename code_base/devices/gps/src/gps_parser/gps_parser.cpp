@@ -264,7 +264,7 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
     if (!isOk) {
         data.timeUtc = kNAN;
     }
-    if (isnan(data.latitude)) {
+    if (std::isnan(data.latitude)) {
         double latitude =
             toDegrees(parts[kGgaLatitudeFieldPartIndex],
                       parts[kGgaLatitudeFieldPartDirection], data.errors);
@@ -272,7 +272,7 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
             data.latitude = latitude;
         };
     }
-    if (isnan(data.longitude)) {
+    if (std::isnan(data.longitude)) {
         double longitude =
             toDegrees(parts[kGgaLongitudeFieldPartIndex],
                       parts[kGgaLongitudeFieldPartDirection], data.errors);
@@ -284,7 +284,7 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
     data.satellites = parts[kGgaSatellitesPartIndex].toInt(&isOk);
     isSatellitesNumberValid(data.satellites, data.errors);
     if (!isOk) {
-        data.satellites = NAN;
+        data.satellites = -1;
     }
 
     isValid = isGgaFixQuality(parts[kGgaFixQualityPartIndex], data.errors);
@@ -301,7 +301,7 @@ void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
         rmcTime = kNAN;
     }
     bool isOk = false;
-    if (isnan(data.latitude)) {
+    if (std::isnan(data.latitude)) {
         double latitude =
             toDegrees(parts[kRmcLatitudeFieldPartIndex],
                       parts[kRmcLatitudeFieldPartDirection], data.errors);
@@ -309,7 +309,7 @@ void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
             data.latitude = latitude;
         }
     }
-    if (isnan(data.longitude)) {
+    if (std::isnan(data.longitude)) {
         double longitude =
             toDegrees(parts[kRmcLongitudeFieldPartIndex],
                       parts[kRmcLongitudeFieldPartDirection], data.errors);

@@ -24,10 +24,10 @@ GPSDevice::~GPSDevice() {
 }
 
 void GPSDevice::attachView(IGpsView *view) {
-    QObject::connect(this, &GPSDevice::gpsDataUpdated, view->widget(),
+    QObject::connect(this, &GPSDevice::gpsDataUpdated, view->asQObject(),
                      [view](const GpsData &data) { view->showGpsData(data); });
     QObject::connect(
-        this, &GPSDevice::gpsStatusChanged, view->widget(),
+        this, &GPSDevice::gpsStatusChanged, view->asQObject(),
         [view](const QString &status) { view->showGpsStatus(status); });
 }
 
@@ -49,7 +49,7 @@ void GPSDevice::start(const QString &portName, QSerialPort::BaudRate baudRate) {
 
 void GPSDevice::stop() {
     if (!m_future.isRunning()) return;
-    qDebug() << "GPS device receved request to be stopped";
+    qDebug() << "GPS device received request to be stopped";
     m_gps_receiver->stop();
     m_future.waitForFinished();
 }
@@ -84,7 +84,7 @@ void GPSDevice::writeOriginGpsDataToFile(const QString &fileFullPath) {
 }
 
 void GPSDevice::gpsStatusUpdated(GpsStatus status) {
-    emit gpsStatusChanged(toString(status), QPrivateSignal{});
+    emit gpsStatusChanged(gps::toString(status), QPrivateSignal{});
     switch (status) {
         case GpsStatus::OFFLINE:  // нет связи с COM-портом
             break;

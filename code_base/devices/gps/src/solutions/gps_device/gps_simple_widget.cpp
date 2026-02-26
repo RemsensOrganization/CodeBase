@@ -1,4 +1,4 @@
-#include "gps_widget.h"
+#include "gps_simple_widget.h"
 
 #include "QVBoxLayout"
 #include "gps_data.h"
