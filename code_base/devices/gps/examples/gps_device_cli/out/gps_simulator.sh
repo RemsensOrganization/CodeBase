@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#!IMPORTANT MUST BE IN UNIX (LF)
 GPS_DATA_FILE="gps_data.nmea"
 COM_PORT="/tmp/gpsCOM"
 
