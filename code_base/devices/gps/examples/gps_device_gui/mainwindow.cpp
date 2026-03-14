@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     // в данном примере виджет дополнительно помещен в QDockWidget
     auto *w1 = new GpsSimpleWidget(m_gps_dock);
     m_gps->attachView(w1);
-    m_gps->start();
+    m_gps->start("/tmp/gpsCOM");
     m_gps->writeOriginGpsDataToFile();
     m_gps->writeFormattedGpsDataToFile(logger::saveFormat::jsonIndented);
 

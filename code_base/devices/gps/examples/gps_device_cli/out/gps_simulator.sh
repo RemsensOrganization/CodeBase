@@ -36,4 +36,6 @@ sleep 3
 ls -l $COM_PORT
 
 # Запускаем приложение
-./gps_cli -c "$COM_PORT"
+#./gps_cli -c "$COM_PORT"
+read -p "Нажмите Enter для выхода..."
+
