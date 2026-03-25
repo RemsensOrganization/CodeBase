@@ -68,9 +68,17 @@ double toDegrees(const QString& coord, const QString& dir,
 
     int degLen = (dir == "N" || dir == "S") ? 2 : 3;
     bool isOk;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    int deg = coord.first(degLen).toInt(&isOk);
+    double min = coord.sliced(degLen).toDouble(&isOk);
+#else
     int deg = coord.leftRef(degLen).toInt(&isOk);
     double min = coord.midRef(degLen).toDouble(&isOk);
+#endif
+
     double decimal = deg + min / 60.0;
+
     if (dir == "S" || dir == "W") decimal *= -1;
     if (!isOk) {
         errors.append(QString(kGpsMsgConvertToDegreesError));
@@ -160,9 +168,15 @@ bool isDateValid(QString& date, QStringList& errors) {
     }
 
     bool okDay, okMonth, okYear;
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    int day = date.first(2).toInt(&okDay);
+    int month = date.sliced(2, 2).toInt(&okMonth);
+    int year = date.sliced(4, 2).toInt(&okYear);
+#else
     int day = date.midRef(0, 2).toInt(&okDay);
     int month = date.midRef(2, 2).toInt(&okMonth);
     int year = date.midRef(4, 2).toInt(&okYear);
+#endif
 
     if (!okDay || !okMonth || !okYear) {
         errors.append(QString(kGpsMsgDateIsInvalid) + QString("(parse error)"));
@@ -190,19 +204,31 @@ bool isTimeValid(const QString& timeStr, QStringList& errors) {
     }
 
     bool ok;
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    int hours = timeStr.first(2).toInt(&ok);
+#else
     int hours = timeStr.midRef(0, 2).toInt(&ok);
+#endif
     if (!ok || hours < 0 || hours > 23) {
         errors.append("Invalid hours in time field");
         return false;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    int minutes = timeStr.sliced(2, 2).toInt(&ok);
+#else
     int minutes = timeStr.midRef(2, 2).toInt(&ok);
+#endif
     if (!ok || minutes < 0 || minutes > 59) {
         errors.append("Invalid minutes in time field");
         return false;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    double seconds = timeStr.sliced(4).toDouble(&ok);
+#else
     double seconds = timeStr.midRef(4).toDouble(&ok);
+#endif
     if (!ok || seconds < 0.0 || seconds >= 60.0) {
         errors.append("Invalid seconds in time field");
         return false;
