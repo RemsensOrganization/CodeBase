@@ -26,6 +26,11 @@
 
    *Рисунок 3 - установка автоформатирования ClangFormat.*
 
+> [!NOTE]
+> Файл .clang-format лежит в корне CodeBase  
+>  https://github.com/RemsensOrganization/CodeBase/blob/main/.clang-format
+   
+
 4. Для автоформатирования кода при сохранении файла нужно   
    включить переопределение файла ClangFormat, см. рис. 4  
    и определить комбинацию горячих клавиш для команды FormatFile, см. рис.5.  
