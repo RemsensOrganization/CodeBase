@@ -30,7 +30,10 @@
 
 > [!NOTE]
 > Файл .clang-format лежит в корне CodeBase  
->  https://github.com/RemsensOrganization/CodeBase/blob/main/.clang-format
+> https://github.com/RemsensOrganization/CodeBase/blob/main/.clang-format  
+> При использовании его в своих проектах кладите на уровень самого проекта или  
+> выше каталогом, вплоть до корня диска. Тогда эти настройки будут использованы для  
+> всех проектов уровнями ниже 
    
 <div style="max-width: 600px;">
 
