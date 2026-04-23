@@ -43,3 +43,4 @@ CMakeLists.txt.user*
 debug
 release
 
+code_base/devops_scripts/deps_resolver/deps/deps_copy.log
